@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac347b15acfb93f41ab6dec74050c3c2, type: 3}
+  m_Name: Equipment_Rusty Sword
+  m_EditorClassIdentifier: Assembly-CSharp::Data.EquipmentDefinition
+  _displayName: Rusty Sword
+  _slot: 1
+  _quality: 0
+  _mainStatType: 5
+  _baseMainStat: 3
+  _growthCurve: {fileID: 11400000, guid: 9b23f9807762953428a7c39c4954ba03, type: 2}

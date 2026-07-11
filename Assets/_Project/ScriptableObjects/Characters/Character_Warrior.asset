@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e3feb38c64c114438e7f4a7a7a7f0cc, type: 3}
+  m_Name: Character_Warrior
+  m_EditorClassIdentifier: Assembly-CSharp::Data.CharacterDefinition
+  _displayName: Warrior
+  _baseStats:
+    HP: 100
+    Attack: 12
+    Defense: 4
+    Speed: 10
+    LifeSteal: 0
+    Tenacity: 0
+    Evasion: 0
+    Crit: 0
+    Accuracy: 0
+    MaxEnergy: 0
+  _defaultSkill: {fileID: 11400000, guid: 2bda9acd731601d4aa30ad6cb7250ce9, type: 2}
