@@ -9,10 +9,8 @@ namespace Combat
     /// </summary>
     public class CombatSimulator
     {
-        public const int EnergyOnAttack = 10;
-        public const int EnergyOnHit = 5;
-
         private readonly CombatContext _context;
+        private readonly CombatRules _rules;
         private readonly Random _random;
         private readonly List<CombatUnit> _scratch = new();
         private readonly List<CombatUnit> _readyUnits = new();
@@ -21,13 +19,16 @@ namespace Combat
 
         private bool _isFinished;
 
-        public CombatSimulator(CombatContext context, Random random = null)
+        public CombatSimulator(CombatContext context, CombatRules rules = null, Random random = null)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _rules = rules != null ? rules : CombatRules.CreateRuntimeDefaults();
             _random = random ?? new Random();
         }
 
         public CombatContext Context => _context;
+
+        public CombatRules Rules => _rules;
 
         public bool IsFinished => _isFinished;
 
@@ -149,7 +150,7 @@ namespace Combat
 
             var damage = CalculateDamage(actor.Stats.Attack, target.Stats.Defense);
             ApplyDamage(actor, target, damage);
-            actor.AddEnergy(EnergyOnAttack);
+            actor.AddEnergy(_rules.EnergyOnAttack);
             OnAttack?.Invoke(actor, target, damage);
         }
 
@@ -194,7 +195,7 @@ namespace Combat
             if (dealt <= 0)
                 return;
 
-            target.AddEnergy(EnergyOnHit);
+            target.AddEnergy(_rules.EnergyOnHit);
             OnDamage?.Invoke(attacker, target, dealt);
 
             if (!target.IsAlive)

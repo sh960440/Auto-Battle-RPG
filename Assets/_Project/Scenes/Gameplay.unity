@@ -315,6 +315,60 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 61305474}
   m_CullTransparentMesh: 1
+--- !u!1 &113297709
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 113297711}
+  - component: {fileID: 113297710}
+  m_Layer: 0
+  m_Name: CombatController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &113297710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113297709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 263748596a7b8c9d0e1f203142536475, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Presentation.CombatController
+  _playerCharacter: {fileID: 11400000, guid: 3087cd36f98b0f74dac67490682c94f0, type: 2}
+  _level: {fileID: 11400000, guid: 6e4bf49af5923d24396d0a1d16647445, type: 2}
+  _enemiesOverride: []
+  _combatRules: {fileID: 11400000, guid: 48596a7b8c9d0e1f2031425364758697, type: 2}
+  _combatPresenter: {fileID: 504089405}
+  _combatHud: {fileID: 1292124300}
+  _enemyEntrance: {fileID: 1590266498}
+  _combatStage: {fileID: 1590266497}
+  _startOnPlay: 1
+  _combatSpeed: 2
+--- !u!4 &113297711
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113297709}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &133226012
 GameObject:
   m_ObjectHideFlags: 0
@@ -2792,7 +2846,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.CombatSkillButton
   _button: {fileID: 1434141825}
   _label: {fileID: 1970428498}
-  _queuedIndicator: {fileID: 0}
+  _queuedIndicator: {fileID: 1458661763}
 --- !u!114 &1434141825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3029,7 +3083,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1458661762
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3530,7 +3584,7 @@ MonoBehaviour:
   _startScaleMultiplier: 0.25
   _startYOffset: 4.5
   _fadeIn: 0
-  _playOnStart: 1
+  _playOnStart: 0
 --- !u!1 &1735625880
 GameObject:
   m_ObjectHideFlags: 0
@@ -4434,3 +4488,4 @@ SceneRoots:
   - {fileID: 798259371}
   - {fileID: 504089406}
   - {fileID: 1590266496}
+  - {fileID: 113297711}

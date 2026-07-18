@@ -9,10 +9,14 @@ namespace Combat.Tests
         [Test]
         public void Duel_PlayerWinsAgainstWeakerEnemy()
         {
-            var player = CreateUnit("Warrior", hp: 100, attack: 20, defense: 5, speed: 10, isPlayer: true);
-            var enemy = CreateUnit("Goblin", hp: 30, attack: 5, defense: 2, speed: 8, isPlayer: false);
+            var rules = CombatRules.CreateRuntimeDefaults();
+            var player = CreateUnit("Warrior", hp: 100, attack: 20, defense: 5, speed: 10, isPlayer: true, rules);
+            var enemy = CreateUnit("Goblin", hp: 30, attack: 5, defense: 2, speed: 8, isPlayer: false, rules);
 
-            var sim = new CombatSimulator(new CombatContext(player, new[] { enemy }), new System.Random(1));
+            var sim = new CombatSimulator(
+                new CombatContext(player, new[] { enemy }),
+                rules,
+                new System.Random(1));
 
             RunUntilFinished(sim);
 
@@ -25,13 +29,17 @@ namespace Combat.Tests
         [Test]
         public void MutualKill_CountsAsDefeat()
         {
-            var player = CreateUnit("Warrior", hp: 50, attack: 10, defense: 0, speed: 10, isPlayer: true);
-            var enemy = CreateUnit("Orc", hp: 50, attack: 10, defense: 0, speed: 10, isPlayer: false);
+            var rules = CombatRules.CreateRuntimeDefaults();
+            var player = CreateUnit("Warrior", hp: 50, attack: 10, defense: 0, speed: 10, isPlayer: true, rules);
+            var enemy = CreateUnit("Orc", hp: 50, attack: 10, defense: 0, speed: 10, isPlayer: false, rules);
 
             player.TakeDamage(50);
             enemy.TakeDamage(50);
 
-            var sim = new CombatSimulator(new CombatContext(player, new[] { enemy }), new System.Random(1));
+            var sim = new CombatSimulator(
+                new CombatContext(player, new[] { enemy }),
+                rules,
+                new System.Random(1));
             sim.Tick(0f);
 
             Assert.IsTrue(sim.IsFinished);
@@ -43,15 +51,35 @@ namespace Combat.Tests
         [Test]
         public void Energy_StopsAtMaxEnergy()
         {
-            var unit = CreateUnit("Warrior", hp: 100, attack: 10, defense: 0, speed: 10, isPlayer: true);
+            var rules = CombatRules.CreateRuntimeDefaults();
+            var unit = CreateUnit("Warrior", hp: 100, attack: 10, defense: 0, speed: 10, isPlayer: true, rules);
 
-            var gained = unit.AddEnergy(CombatUnit.DefaultMaxEnergy + 50);
+            var gained = unit.AddEnergy(rules.DefaultMaxEnergy + 50);
 
-            Assert.AreEqual(CombatUnit.DefaultMaxEnergy, gained);
-            Assert.AreEqual(CombatUnit.DefaultMaxEnergy, unit.Energy);
+            Assert.AreEqual(rules.DefaultMaxEnergy, gained);
+            Assert.AreEqual(rules.DefaultMaxEnergy, unit.Energy);
 
             Assert.AreEqual(0, unit.AddEnergy(10));
-            Assert.AreEqual(CombatUnit.DefaultMaxEnergy, unit.Energy);
+            Assert.AreEqual(rules.DefaultMaxEnergy, unit.Energy);
+        }
+
+        [Test]
+        public void BasicAttack_GrantsEnergyFromCombatRules()
+        {
+            var rules = CombatRules.CreateRuntimeDefaults();
+            var player = CreateUnit("Warrior", hp: 100, attack: 50, defense: 0, speed: 100, isPlayer: true, rules);
+            var enemy = CreateUnit("Dummy", hp: 500, attack: 1, defense: 0, speed: 1, isPlayer: false, rules);
+
+            var sim = new CombatSimulator(
+                new CombatContext(player, new[] { enemy }),
+                rules,
+                new System.Random(1));
+
+            // One player turn at Speed 100 fills ATB in 1 second.
+            sim.Tick(1f);
+
+            Assert.AreEqual(rules.EnergyOnAttack, player.Energy);
+            Assert.AreEqual(rules.EnergyOnHit, enemy.Energy);
         }
 
         private static CombatUnit CreateUnit(
@@ -60,7 +88,8 @@ namespace Combat.Tests
             int attack,
             int defense,
             int speed,
-            bool isPlayer)
+            bool isPlayer,
+            CombatRules rules)
         {
             return new CombatUnit(
                 name,
@@ -71,7 +100,8 @@ namespace Combat.Tests
                     Defense = defense,
                     Speed = speed
                 },
-                isPlayer);
+                isPlayer,
+                rules);
         }
 
         private static void RunUntilFinished(CombatSimulator sim, int maxTicks = 100000)

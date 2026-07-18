@@ -8,19 +8,17 @@ namespace Combat
     /// </summary>
     public class CombatUnit
     {
-        public const float AtbThreshold = 100f;
-        public const int DefaultMaxEnergy = 200;
-
         private readonly string _displayName;
         private readonly StatBlock _stats;
         private readonly bool _isPlayerSide;
+        private readonly float _atbThreshold;
         private readonly int _maxEnergy;
 
         private int _currentHp;
         private float _atbGauge;
         private int _energy;
 
-        public CombatUnit(string displayName, StatBlock stats, bool isPlayerSide)
+        public CombatUnit(string displayName, StatBlock stats, bool isPlayerSide, CombatRules rules = null)
         {
             if (string.IsNullOrWhiteSpace(displayName))
                 throw new ArgumentException("Display name is required.", nameof(displayName));
@@ -28,7 +26,10 @@ namespace Combat
             _displayName = displayName;
             _stats = stats;
             _isPlayerSide = isPlayerSide;
-            _maxEnergy = stats.MaxEnergy > 0 ? stats.MaxEnergy : DefaultMaxEnergy;
+            _atbThreshold = rules != null ? rules.AtbThreshold : CombatRules.FallbackAtbThreshold;
+            _maxEnergy = stats.MaxEnergy > 0
+                ? stats.MaxEnergy
+                : (rules != null ? rules.DefaultMaxEnergy : CombatRules.FallbackMaxEnergy);
 
             ResetCombatState();
         }
@@ -39,6 +40,8 @@ namespace Combat
         public StatBlock Stats => _stats;
 
         public bool IsPlayerSide => _isPlayerSide;
+
+        public float AtbThreshold => _atbThreshold;
 
         public int MaxHp => _stats.HP;
 
@@ -52,7 +55,7 @@ namespace Combat
 
         public bool IsAlive => _currentHp > 0;
 
-        public bool IsAtbReady => _atbGauge >= AtbThreshold;
+        public bool IsAtbReady => _atbGauge >= _atbThreshold;
 
         /// <summary>
         /// Resets HP, ATB, and energy for combat start.
@@ -65,7 +68,7 @@ namespace Combat
         }
 
         /// <summary>
-        /// Adds ATB up to <see cref="AtbThreshold"/>.
+        /// Adds ATB. Ready when gauge reaches <see cref="AtbThreshold"/>.
         /// </summary>
         public void AddAtb(float amount) => _atbGauge += amount;
 

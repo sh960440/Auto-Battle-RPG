@@ -135,7 +135,7 @@ namespace Presentation
 
         private static float GetAtbNormalized(CombatUnit unit)
         {
-            return Mathf.Clamp01(unit.AtbGauge / CombatUnit.AtbThreshold);
+            return Mathf.Clamp01(unit.AtbGauge / unit.AtbThreshold);
         }
 
         private static float GetEnergyNormalized(CombatUnit unit)
