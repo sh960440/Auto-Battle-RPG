@@ -14,11 +14,13 @@ namespace Presentation
         [SerializeField] private Image _hpFill;
         [SerializeField] private Image _atbFill;
         [SerializeField] private Image _energyFill;
+        [SerializeField] private GameObject _energyRoot;
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private GameObject _root;
 
         private CombatUnit _unit;
         private float _displayedHpNormalized = 1f;
+        private bool _showEnergy;
 
         public CombatUnit Unit => _unit;
 
@@ -33,6 +35,7 @@ namespace Presentation
             if (_nameLabel != null)
                 _nameLabel.text = unit != null ? unit.DisplayName : string.Empty;
 
+            SetEnergyVisible(unit != null && unit.IsPlayerSide);
             SetAliveVisual(unit == null || unit.IsAlive);
             RefreshInstant();
         }
@@ -40,6 +43,19 @@ namespace Presentation
         public void Unbind()
         {
             _unit = null;
+        }
+
+        /// <summary>
+        /// Shows or hides the energy bar. Enemies should stay hidden.
+        /// </summary>
+        public void SetEnergyVisible(bool visible)
+        {
+            _showEnergy = visible;
+
+            if (_energyRoot != null)
+                _energyRoot.SetActive(visible);
+            else if (_energyFill != null)
+                _energyFill.gameObject.SetActive(visible);
         }
 
         /// <summary>
@@ -53,7 +69,8 @@ namespace Presentation
             _displayedHpNormalized = GetHpNormalized(_unit);
             ApplyHpFill(_displayedHpNormalized);
             ApplyAtbFill(GetAtbNormalized(_unit));
-            ApplyEnergyFill(GetEnergyNormalized(_unit));
+            if (_showEnergy)
+                ApplyEnergyFill(GetEnergyNormalized(_unit));
             SetAliveVisual(_unit.IsAlive);
         }
 
@@ -66,7 +83,8 @@ namespace Presentation
                 return;
 
             ApplyAtbFill(GetAtbNormalized(_unit));
-            ApplyEnergyFill(GetEnergyNormalized(_unit));
+            if (_showEnergy)
+                ApplyEnergyFill(GetEnergyNormalized(_unit));
         }
 
         /// <summary>
