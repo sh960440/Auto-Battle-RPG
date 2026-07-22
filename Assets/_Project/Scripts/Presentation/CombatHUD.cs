@@ -17,10 +17,9 @@ namespace Presentation
 
         private void Awake()
         {
+            // Do not unbind here: the HUD is bound by CombatController before it is shown,
+            // and this Awake runs on first activation (which would wipe that binding).
             ApplyBarVisibilityRules();
-            _skillButton?.Unbind();
-            _damageFloatPresenter?.Unbind();
-            _resultOverlay?.Unbind();
         }
 
         /// <summary>

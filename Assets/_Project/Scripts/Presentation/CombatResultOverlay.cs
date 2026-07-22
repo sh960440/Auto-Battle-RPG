@@ -1,3 +1,4 @@
+using System;
 using Combat;
 using Core;
 using TMPro;
@@ -18,10 +19,15 @@ namespace Presentation
         [SerializeField] private Button _continueButton;
         [SerializeField] private string _victoryText = "WIN";
         [SerializeField] private string _defeatText = "LOSE";
-        [SerializeField] private bool _loadMainMenuOnContinue = true;
+        [SerializeField] private bool _loadMainMenuOnContinue;
         [SerializeField] private UnityEvent _onContinue;
 
         private CombatSimulator _simulator;
+
+        /// <summary>
+        /// Fired when the player presses Continue after a result.
+        /// </summary>
+        public event Action Continued;
 
         private void Awake()
         {
@@ -47,7 +53,7 @@ namespace Presentation
         {
             Unbind();
 
-            _simulator = simulator ?? throw new System.ArgumentNullException(nameof(simulator));
+            _simulator = simulator ?? throw new ArgumentNullException(nameof(simulator));
             _simulator.OnCombatEnd += HandleCombatEnd;
             Hide();
 
@@ -99,6 +105,7 @@ namespace Presentation
         private void HandleContinue()
         {
             _onContinue?.Invoke();
+            Continued?.Invoke();
             Hide();
             Unbind();
 

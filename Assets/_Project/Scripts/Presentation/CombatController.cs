@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Combat;
+using Core;
 using Data;
+using Infrastructure;
 using UnityEngine;
 
 namespace Presentation
@@ -23,13 +25,15 @@ namespace Presentation
         [SerializeField] private CombatStage _combatStage;
 
         [Header("Debug")]
-        [SerializeField] private bool _startOnPlay = true;
+        [SerializeField] private bool _startOnPlay;
         [SerializeField] [Min(0.1f)] private float _combatSpeed = 1.75f;
 
         private CombatSimulator _simulator;
         private bool _isTicking;
 
         public CombatSimulator Simulator => _simulator;
+
+        public LevelDefinition Level => _level;
 
         public bool IsCombatActive => _isTicking && _simulator != null && !_simulator.IsFinished;
 
@@ -56,7 +60,8 @@ namespace Presentation
         /// <summary>
         /// Builds units from assigned data, binds HUD/presenter, and starts ticking.
         /// </summary>
-        public void StartCombat()
+        /// <param name="playEntrance">When false, enemies stay at their current stop-point pose.</param>
+        public void StartCombat(bool playEntrance = true)
         {
             StopCombat();
 
@@ -96,11 +101,14 @@ namespace Presentation
 
             var context = new CombatContext(player, enemies);
             _simulator = new CombatSimulator(context, rules);
+            _simulator.OnCombatEnd += HandleCombatEnd;
 
             ApplyEnemySlots(enemyDefs.Count);
             _combatPresenter?.Bind(_simulator);
             _combatHud?.Bind(_simulator, _playerCharacter.DefaultSkill);
-            _enemyEntrance?.PlayEntrance();
+
+            if (playEntrance)
+                _enemyEntrance?.PlayEntrance();
 
             _isTicking = true;
             Debug.Log($"[Combat] Started vs {enemyDefs.Count} enemies.");
@@ -113,10 +121,21 @@ namespace Presentation
         {
             _isTicking = false;
 
+            if (_simulator != null)
+                _simulator.OnCombatEnd -= HandleCombatEnd;
+
             _combatHud?.Unbind();
             _combatPresenter?.Unbind();
 
             _simulator = null;
+        }
+
+        private void HandleCombatEnd(CombatResult result)
+        {
+            _isTicking = false;
+
+            if (ServiceLocator.TryGet(out GameStateMachine stateMachine))
+                stateMachine.SetState(GameState.Result);
         }
 
         private List<EnemyDefinition> ResolveEnemies()
