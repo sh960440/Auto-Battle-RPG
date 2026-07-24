@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Core;
 using Data;
 using Infrastructure;
@@ -16,7 +17,8 @@ namespace Exploration
         [SerializeField] private EncounterTrigger _encounterTrigger;
         [SerializeField] private CombatController _combatController;
         [SerializeField] private CombatResultOverlay _resultOverlay;
-        [SerializeField] private LevelDefinition _level;
+        [SerializeField] private StageEncounterTable _encounterTable;
+        [SerializeField] private LevelDefinition _fallbackLevel;
 
         [Header("Advance")]
         [SerializeField] [Min(0.1f)] private float _advanceDuration = 1.5f;
@@ -28,11 +30,15 @@ namespace Exploration
         [SerializeField] private MainHUD _mainHUD;
 
         private GameStateMachine _stateMachine;
+        private StageProgressService _stageProgress;
         private Coroutine _advanceRoutine;
         private bool _isAdvancing;
+        private readonly List<EnemyDefinition> _rolledEnemies = new();
 
         private void Start()
         {
+            EnsureStageProgress();
+
             if (!ServiceLocator.TryGet(out _stateMachine))
             {
                 Debug.LogWarning($"{nameof(ExplorationController)}: {nameof(GameStateMachine)} is not registered.");
@@ -45,10 +51,16 @@ namespace Exploration
                 _mainHUD.AdvanceClicked += HandleAdvanceClicked;
 
             if (_resultOverlay != null)
-                _resultOverlay.Continued += HandleResultContinued;
+            {
+                _resultOverlay.ContinueRequested += HandleContinueAdvance;
+                _resultOverlay.ReturnRequested += HandleReturnToCharacter;
+            }
 
             if (_encounterTrigger != null)
                 _encounterTrigger.EncounterReady += HandleEncounterReady;
+
+            if (_stageProgress != null)
+                _stageProgress.StageChanged += HandleStageChanged;
 
             if (_stateMachine.CurrentState == GameState.Exploration)
                 HandleEnterExploration();
@@ -63,10 +75,25 @@ namespace Exploration
                 _mainHUD.AdvanceClicked -= HandleAdvanceClicked;
 
             if (_resultOverlay != null)
-                _resultOverlay.Continued -= HandleResultContinued;
+            {
+                _resultOverlay.ContinueRequested -= HandleContinueAdvance;
+                _resultOverlay.ReturnRequested -= HandleReturnToCharacter;
+            }
 
             if (_encounterTrigger != null)
                 _encounterTrigger.EncounterReady -= HandleEncounterReady;
+
+            if (_stageProgress != null)
+                _stageProgress.StageChanged -= HandleStageChanged;
+        }
+
+        private void EnsureStageProgress()
+        {
+            if (ServiceLocator.TryGet(out _stageProgress))
+                return;
+
+            _stageProgress = new StageProgressService();
+            ServiceLocator.Register(_stageProgress);
         }
 
         private void HandleStateEntered(GameState state)
@@ -83,12 +110,14 @@ namespace Exploration
             _encounterTrigger?.ResetEncounter();
             _combatController?.StopCombat();
             ResetScrollVisual();
+            RefreshStageHud();
             _mainHUD?.ShowAdvanceOnly();
         }
 
         private void HandleEnterCombat()
         {
             _mainHUD?.HideAllActions();
+            _combatController?.SetEncounter(_rolledEnemies);
             // Encounter already moved enemies to the stop point; skip a second approach.
             _combatController?.StartCombat(playEntrance: false);
         }
@@ -113,12 +142,22 @@ namespace Exploration
             _stateMachine.SetState(GameState.Combat);
         }
 
-        private void HandleResultContinued()
+        private void HandleContinueAdvance()
         {
             if (_stateMachine == null)
                 return;
 
             _stateMachine.SetState(GameState.Exploration);
+        }
+
+        private void HandleReturnToCharacter()
+        {
+            // Hook for the character page.
+        }
+
+        private void HandleStageChanged(int stage)
+        {
+            _mainHUD?.SetStage(stage);
         }
 
         private IEnumerator AdvanceRoutine()
@@ -155,23 +194,44 @@ namespace Exploration
             _isAdvancing = false;
             _advanceRoutine = null;
 
-            var enemyCount = ResolveEnemyCount();
-            _encounterTrigger?.BeginEncounter(enemyCount);
-        }
-
-        private int ResolveEnemyCount()
-        {
-            if (_level?.Enemies == null || _level.Enemies.Count == 0)
-                return 1;
-
-            var count = 0;
-            for (var i = 0; i < _level.Enemies.Count; i++)
+            if (!RollEncounter())
             {
-                if (_level.Enemies[i] != null)
-                    count++;
+                Debug.LogError($"{nameof(ExplorationController)}: Failed to roll enemies for stage {_stageProgress?.CurrentStage}.", this);
+                _mainHUD?.SetAdvanceInteractable(true);
+                yield break;
             }
 
-            return Mathf.Max(1, count);
+            _encounterTrigger?.BeginEncounter(_rolledEnemies.Count);
+        }
+
+        private bool RollEncounter()
+        {
+            _rolledEnemies.Clear();
+            var stage = _stageProgress != null ? _stageProgress.CurrentStage : 1;
+
+            if (_encounterTable != null)
+            {
+                var rolled = _encounterTable.RollEnemies(stage);
+                for (var i = 0; i < rolled.Count; i++)
+                    _rolledEnemies.Add(rolled[i]);
+            }
+
+            if (_rolledEnemies.Count == 0 && _fallbackLevel?.Enemies != null)
+            {
+                for (var i = 0; i < _fallbackLevel.Enemies.Count; i++)
+                {
+                    if (_fallbackLevel.Enemies[i] != null)
+                        _rolledEnemies.Add(_fallbackLevel.Enemies[i]);
+                }
+            }
+
+            return _rolledEnemies.Count > 0;
+        }
+
+        private void RefreshStageHud()
+        {
+            if (_stageProgress != null)
+                _mainHUD?.SetStage(_stageProgress.CurrentStage);
         }
 
         private void StopAdvance()

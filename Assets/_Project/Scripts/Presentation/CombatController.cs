@@ -29,6 +29,7 @@ namespace Presentation
         [SerializeField] [Min(0.1f)] private float _combatSpeed = 1.75f;
 
         private CombatSimulator _simulator;
+        private readonly List<EnemyDefinition> _pendingEnemies = new();
         private bool _isTicking;
 
         public CombatSimulator Simulator => _simulator;
@@ -58,6 +59,22 @@ namespace Presentation
         }
 
         /// <summary>
+        /// Sets the enemy list used by the next <see cref="StartCombat"/> call.
+        /// </summary>
+        public void SetEncounter(IReadOnlyList<EnemyDefinition> enemies)
+        {
+            _pendingEnemies.Clear();
+            if (enemies == null)
+                return;
+
+            for (var i = 0; i < enemies.Count; i++)
+            {
+                if (enemies[i] != null)
+                    _pendingEnemies.Add(enemies[i]);
+            }
+        }
+
+        /// <summary>
         /// Builds units from assigned data, binds HUD/presenter, and starts ticking.
         /// </summary>
         /// <param name="playEntrance">When false, enemies stay at their current stop-point pose.</param>
@@ -80,7 +97,7 @@ namespace Presentation
             var enemyDefs = ResolveEnemies();
             if (enemyDefs.Count == 0)
             {
-                Debug.LogError("CombatController: No enemies assigned (Level or Enemies Override).", this);
+                Debug.LogError("CombatController: No enemies assigned (encounter table, Level, or Override).", this);
                 return;
             }
 
@@ -134,6 +151,9 @@ namespace Presentation
         {
             _isTicking = false;
 
+            if (ServiceLocator.TryGet(out StageProgressService progress))
+                progress.ApplyCombatResult(result);
+
             if (ServiceLocator.TryGet(out GameStateMachine stateMachine))
                 stateMachine.SetState(GameState.Result);
         }
@@ -141,6 +161,12 @@ namespace Presentation
         private List<EnemyDefinition> ResolveEnemies()
         {
             var result = new List<EnemyDefinition>();
+
+            if (_pendingEnemies.Count > 0)
+            {
+                result.AddRange(_pendingEnemies);
+                return result;
+            }
 
             if (_enemiesOverride != null && _enemiesOverride.Length > 0)
             {

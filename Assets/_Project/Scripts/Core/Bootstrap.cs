@@ -10,6 +10,7 @@ namespace Core
     public class Bootstrap : MonoBehaviour
     {
         [SerializeField] private string _firstScene = SceneNames.MainMenu;
+        [SerializeField] [Min(1)] private int _debugStartingStage = 1;
 
         private void Awake()
         {
@@ -21,9 +22,9 @@ namespace Core
             SceneManager.LoadScene(_firstScene);
         }
 
-        private static void RegisterServices()
+        private void RegisterServices()
         {
-            // ServiceLocator.Register<ISomeService>(...)
+            ServiceLocator.Register(new StageProgressService(_debugStartingStage));
         }
     }
 }

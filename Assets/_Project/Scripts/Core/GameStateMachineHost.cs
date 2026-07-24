@@ -23,6 +23,10 @@ namespace Core
                 ServiceLocator.Unregister<GameStateMachine>();
 
             ServiceLocator.Register(_machine);
+
+            if (!ServiceLocator.IsRegistered<StageProgressService>())
+                ServiceLocator.Register(new StageProgressService());
+
             _machine.SetState(_initialState);
         }
 

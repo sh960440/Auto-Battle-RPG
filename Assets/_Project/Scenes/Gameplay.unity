@@ -492,13 +492,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.CombatResultOverlay
   _root: {fileID: 1209639875}
   _resultLabel: {fileID: 1735625882}
+  _stageLabel: {fileID: 0}
   _continueButton: {fileID: 30987784}
-  _victoryText: WIN
-  _defeatText: LOSE
-  _loadMainMenuOnContinue: 0
-  _onContinue:
-    m_PersistentCalls:
-      m_Calls: []
+  _returnButton: {fileID: 0}
+  _victoryText: Victory
+  _defeatText: Defeat
+  _continueLabel: Continue
+  _returnLabel: Character
 --- !u!1 &151787990
 GameObject:
   m_ObjectHideFlags: 0
@@ -4497,7 +4497,8 @@ MonoBehaviour:
   _encounterTrigger: {fileID: 2100000005}
   _combatController: {fileID: 113297710}
   _resultOverlay: {fileID: 143444160}
-  _level: {fileID: 11400000, guid: 6e4bf49af5923d24396d0a1d16647445, type: 2}
+  _encounterTable: {fileID: 11400000, guid: 293a4b5c6d7e8f901a2b3c4d5e6f0718, type: 2}
+  _fallbackLevel: {fileID: 11400000, guid: 6e4bf49af5923d24396d0a1d16647445, type: 2}
   _advanceDuration: 1.5
   _scrollRoot: {fileID: 0}
   _scrollStartLocalPosition: {x: 0, y: 0.4, z: 0}
@@ -4628,8 +4629,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.MainHUD
   _advanceButton: {fileID: 0}
+  _stageLabel: {fileID: 0}
   _advanceButtonSprite: {fileID: 0}
   _showAdvanceLabel: 1
+  _stageFormat: Stage {0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
