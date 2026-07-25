@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,25 @@ namespace Data
         /// Configured stage bands, ordered as authored.
         /// </summary>
         public IReadOnlyList<StageEncounterBand> Bands => _bands;
+
+        /// <summary>
+        /// Creates a runtime table for tests or temporary setups.
+        /// </summary>
+        public static StageEncounterTable CreateRuntime(params StageEncounterBand[] bands)
+        {
+            var table = CreateInstance<StageEncounterTable>();
+            table.name = "StageEncounterTable_Runtime";
+            table._bands = bands ?? Array.Empty<StageEncounterBand>();
+            return table;
+        }
+
+        /// <summary>
+        /// Returns the band that owns the given stage, or the last band as a fallback.
+        /// </summary>
+        public StageEncounterBand GetBandForStage(int stage)
+        {
+            return FindBand(stage);
+        }
 
         /// <summary>
         /// Picks a random non-empty enemy list for the given stage.

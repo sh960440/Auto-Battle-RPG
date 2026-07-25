@@ -64,14 +64,18 @@ namespace Core
         {
             _stageBeforeLastChange = _currentStage;
             _lastCombatResult = result;
-
-            if (result == CombatResult.Victory)
-                _currentStage += 1;
-            else
-                _currentStage = Mathf.Max(1, _currentStage - 3);
+            _currentStage = StageProgressRules.GetNextStage(_currentStage, result);
 
             Save();
             StageChanged?.Invoke(_currentStage);
+        }
+
+        /// <summary>
+        /// Clears the cached last combat result after the result UI is dismissed.
+        /// </summary>
+        public void ClearLastCombatResult()
+        {
+            _lastCombatResult = null;
         }
 
         private void Load()

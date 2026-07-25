@@ -147,11 +147,13 @@ namespace Exploration
             if (_stateMachine == null)
                 return;
 
+            _stageProgress?.ClearLastCombatResult();
             _stateMachine.SetState(GameState.Exploration);
         }
 
         private void HandleReturnToCharacter()
         {
+            _stageProgress?.ClearLastCombatResult();
             // Hook for the character page.
         }
 

@@ -44,6 +44,20 @@ namespace Data
         public IReadOnlyList<EnemyComposition> Compositions => _compositions;
 
         /// <summary>
+        /// Creates a band for runtime or tests.
+        /// </summary>
+        public static StageEncounterBand Create(int minStage, int maxStage, bool isOpenEnded = false)
+        {
+            return new StageEncounterBand
+            {
+                _minStage = Math.Max(1, minStage),
+                _maxStage = Math.Max(minStage, maxStage),
+                _isOpenEnded = isOpenEnded,
+                _compositions = Array.Empty<EnemyComposition>()
+            };
+        }
+
+        /// <summary>
         /// Returns whether the given stage falls inside this band.
         /// </summary>
         public bool Contains(int stage)
