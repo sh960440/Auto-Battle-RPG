@@ -15,6 +15,7 @@ MonoBehaviour:
   _displayName: Leather Vest
   _slot: 2
   _quality: 0
+  _requiredClass: 0
   _mainStatType: 1
   _baseMainStat: 2
   _growthCurve: {fileID: 11400000, guid: 9b23f9807762953428a7c39c4954ba03, type: 2}

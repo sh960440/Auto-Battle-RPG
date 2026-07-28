@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Character_Warrior
   m_EditorClassIdentifier: Assembly-CSharp::Data.CharacterDefinition
   _displayName: Warrior
+  _characterClass: 0
   _baseStats:
     HP: 100
     Attack: 12
@@ -24,4 +25,5 @@ MonoBehaviour:
     Crit: 0
     Accuracy: 0
     MaxEnergy: 0
+  _upgradeCurve: {fileID: 11400000, guid: 50085dd00e85a19489e180042ed2b863, type: 2}
   _defaultSkill: {fileID: 11400000, guid: 2bda9acd731601d4aa30ad6cb7250ce9, type: 2}

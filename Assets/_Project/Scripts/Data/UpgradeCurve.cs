@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Data
@@ -14,6 +15,18 @@ namespace Data
         [SerializeField] private StatBlock _statBonusPerLevel;
 
         public int MaxLevel => _maxLevel;
+
+        /// <summary>
+        /// Creates a runtime curve for temporary setups.
+        /// </summary>
+        public static UpgradeCurve CreateRuntime(StatBlock bonusPerLevel, int maxLevel = 30)
+        {
+            var curve = CreateInstance<UpgradeCurve>();
+            curve.name = "UpgradeCurve_Runtime";
+            curve._maxLevel = Math.Max(1, maxLevel);
+            curve._statBonusPerLevel = bonusPerLevel;
+            return curve;
+        }
 
         /// <summary>
         /// Gold required to upgrade from <paramref name="currentLevel"/> to the next level.

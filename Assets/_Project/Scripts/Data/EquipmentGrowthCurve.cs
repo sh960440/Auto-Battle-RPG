@@ -13,6 +13,24 @@ namespace Data
         [SerializeField] private int _tier2MaxLevel = 20;
         [SerializeField] private int _tier2BonusPerLevel = 2;
 
+        /// <summary>
+        /// Creates a runtime curve for temporary setups.
+        /// </summary>
+        public static EquipmentGrowthCurve CreateRuntime(
+            int tier1MaxLevel = 10,
+            int tier1BonusPerLevel = 1,
+            int tier2MaxLevel = 20,
+            int tier2BonusPerLevel = 2)
+        {
+            var curve = CreateInstance<EquipmentGrowthCurve>();
+            curve.name = "EquipGrowth_Runtime";
+            curve._tier1MaxLevel = tier1MaxLevel;
+            curve._tier1BonusPerLevel = tier1BonusPerLevel;
+            curve._tier2MaxLevel = tier2MaxLevel;
+            curve._tier2BonusPerLevel = tier2BonusPerLevel;
+            return curve;
+        }
+
         public int GetBonusFromLevel(int level)
         {
             if (level <= 1)
