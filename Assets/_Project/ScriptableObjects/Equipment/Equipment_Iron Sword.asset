@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac347b15acfb93f41ab6dec74050c3c2, type: 3}
-  m_Name: Equipment_Leather Vest
+  m_Name: Equipment_Iron Sword
   m_EditorClassIdentifier: Assembly-CSharp::Data.EquipmentDefinition
-  _displayName: Leather Vest
-  _slot: 2
-  _quality: 0
-  _requiredClass: 0
-  _baseMainStat: 2
+  _displayName: Iron Sword
+  _slot: 1
+  _quality: 1
+  _requiredClass: 1
+  _baseMainStat: 5
   _growthCurve: {fileID: 11400000, guid: 9b23f9807762953428a7c39c4954ba03, type: 2}

@@ -1,4 +1,4 @@
-using Data;
+﻿using Data;
 using NUnit.Framework;
 
 namespace Data.Tests
@@ -9,8 +9,8 @@ namespace Data.Tests
         public void Calculate_LevelOneBare_ReturnsBaseStats()
         {
             var definition = CharacterDefinition.CreateRuntime(
-                "Warrior",
-                CharacterClass.Warrior,
+                "Knight",
+                CharacterClass.Knight,
                 new StatBlock { HP = 100, Attack = 12, Defense = 4, Speed = 10 },
                 UpgradeCurve.CreateRuntime(new StatBlock { HP = 5, Attack = 1, Defense = 1 }));
 
@@ -27,8 +27,8 @@ namespace Data.Tests
         public void Calculate_AppliesLevelBonusFromUpgradeCurve()
         {
             var definition = CharacterDefinition.CreateRuntime(
-                "Warrior",
-                CharacterClass.Warrior,
+                "Knight",
+                CharacterClass.Knight,
                 new StatBlock { HP = 100, Attack = 12, Defense = 4, Speed = 10 },
                 UpgradeCurve.CreateRuntime(new StatBlock { HP = 5, Attack = 1, Defense = 1 }));
 
@@ -46,8 +46,8 @@ namespace Data.Tests
         public void Calculate_AddsEquippedMainStats_UsingEquipmentLevelCurve()
         {
             var definition = CharacterDefinition.CreateRuntime(
-                "Warrior",
-                CharacterClass.Warrior,
+                "Knight",
+                CharacterClass.Knight,
                 new StatBlock { HP = 100, Attack = 12, Defense = 4, Speed = 10 },
                 UpgradeCurve.CreateRuntime(new StatBlock { HP = 5, Attack = 1, Defense = 1 }));
 
@@ -58,24 +58,21 @@ namespace Data.Tests
             var sword = EquipmentDefinition.CreateRuntime(
                 "Sword",
                 EquipmentSlot.RightHand,
-                CharacterClass.Warrior,
-                StatType.Attack,
+                CharacterClass.Knight,
                 baseMainStat: 3,
                 growth);
 
             var vest = EquipmentDefinition.CreateRuntime(
                 "Vest",
                 EquipmentSlot.UpperBody,
-                CharacterClass.Warrior,
-                StatType.Defense,
+                CharacterClass.Knight,
                 baseMainStat: 2,
                 growth);
 
             var pants = EquipmentDefinition.CreateRuntime(
                 "Pants",
                 EquipmentSlot.LowerBody,
-                CharacterClass.Warrior,
-                StatType.HP,
+                CharacterClass.Knight,
                 baseMainStat: 10,
                 growth);
 

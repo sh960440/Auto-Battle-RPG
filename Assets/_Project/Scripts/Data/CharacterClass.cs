@@ -1,12 +1,12 @@
 namespace Data
 {
     /// <summary>
-    /// Shared class identity.
+    /// Class identity for characters and class-locked equipment.
     /// </summary>
     public enum CharacterClass
     {
-        Warrior = 0,
-        Mage = 1,
-        Rogue = 2
+        Knight = 0,
+        Swordsman = 1,
+        ShieldGuard = 2
     }
 }

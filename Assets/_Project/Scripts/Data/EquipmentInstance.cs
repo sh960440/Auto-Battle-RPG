@@ -19,6 +19,17 @@ namespace Data
             _level = Math.Max(1, level);
         }
 
+        /// <summary>
+        /// Creates an item whose level is decided at obtain time from stage difficulty.
+        /// </summary>
+        public static EquipmentInstance CreateForStage(EquipmentDefinition definition, int stage)
+        {
+            if (definition == null)
+                throw new ArgumentNullException(nameof(definition));
+
+            return new EquipmentInstance(definition, EquipmentLevelRules.GetLevelForStage(stage));
+        }
+
         public EquipmentDefinition Definition => _definition;
 
         public int Level => _level;

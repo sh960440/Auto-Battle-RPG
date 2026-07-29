@@ -47,17 +47,25 @@ namespace Data
         }
 
         /// <summary>
+        /// Whether <paramref name="item"/> can be equipped by this character's class.
+        /// </summary>
+        public bool CanEquip(EquipmentInstance item)
+        {
+            return item != null && item.Definition.CanBeEquippedBy(CharacterClass);
+        }
+
+        /// <summary>
         /// Overwrites the matching slot with <paramref name="item"/>.
         /// Returns the previous item, or null if the slot was empty.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when item is null.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when class or slot does not match.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when class does not match.</exception>
         public EquipmentInstance Equip(EquipmentInstance item)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
 
-            if (!item.Definition.CanBeEquippedBy(CharacterClass))
+            if (!CanEquip(item))
             {
                 throw new InvalidOperationException(
                     $"Cannot equip {item.DisplayName}: requires {item.RequiredClass}, character is {CharacterClass}.");
