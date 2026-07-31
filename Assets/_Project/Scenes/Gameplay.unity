@@ -2986,7 +2986,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: WARRIOR
+  m_text: PLAYER
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4590,6 +4590,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2200000002}
   - component: {fileID: 2200000003}
+  - component: {fileID: 2200000004}
   m_Layer: 5
   m_Name: MainHUD
   m_TagString: Untagged
@@ -4633,6 +4634,34 @@ MonoBehaviour:
   _advanceButtonSprite: {fileID: 0}
   _showAdvanceLabel: 1
   _stageFormat: Stage {0}
+--- !u!114 &2200000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2200000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9673bd92501e7fb4c9b428516c0b257b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Presentation.CharacterSheet
+  _starterCharacters:
+  - {fileID: 11400000, guid: 3087cd36f98b0f74dac67490682c94f0, type: 2}
+  - {fileID: 11400000, guid: 7c1fdb5617cb4a1588d5e2c76c47fc82, type: 2}
+  - {fileID: 11400000, guid: f59bf3e93a224cd5b8e57e9419c42742, type: 2}
+  _startingGold: 100
+  _panelRoot: {fileID: 0}
+  _openButton: {fileID: 0}
+  _closeButton: {fileID: 0}
+  _prevButton: {fileID: 0}
+  _nextButton: {fileID: 0}
+  _nameLabel: {fileID: 0}
+  _classLabel: {fileID: 0}
+  _levelLabel: {fileID: 0}
+  _statsLabel: {fileID: 0}
+  _equipmentLabel: {fileID: 0}
+  _skillLabel: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e3feb38c64c114438e7f4a7a7a7f0cc, type: 3}
+  m_Name: Character_ShieldGuard
+  m_EditorClassIdentifier: Assembly-CSharp::Data.CharacterDefinition
+  _displayName: Shield Guard
+  _characterClass: 2
+  _baseStats:
+    HP: 110
+    Attack: 8
+    Defense: 10
+    Speed: 8
+    LifeSteal: 0
+    Tenacity: 0
+    Evasion: 0
+    Crit: 0
+    Accuracy: 0
+    MaxEnergy: 0
+  _upgradeCurve: {fileID: 11400000, guid: 265a1fc3962d40ef8c6b04daa55bd3dd, type: 2}
+  _defaultSkill: {fileID: 11400000, guid: d2cedb61188b47228ef0c4d3864f4409, type: 2}

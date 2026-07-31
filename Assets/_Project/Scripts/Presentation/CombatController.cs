@@ -82,17 +82,8 @@ namespace Presentation
         {
             StopCombat();
 
-            if (_playerCharacter == null)
-            {
-                Debug.LogError("CombatController: Player character is missing.", this);
+            if (!TryResolvePlayer(out var playerName, out var playerStats, out var playerSkill))
                 return;
-            }
-
-            if (_playerCharacter.DefaultSkill == null)
-            {
-                Debug.LogError("CombatController: Player character has no default skill.", this);
-                return;
-            }
 
             var enemyDefs = ResolveEnemies();
             if (enemyDefs.Count == 0)
@@ -104,8 +95,8 @@ namespace Presentation
             var rules = _combatRules != null ? _combatRules : CombatRules.CreateRuntimeDefaults();
 
             var player = new CombatUnit(
-                _playerCharacter.DisplayName,
-                _playerCharacter.BaseStats,
+                playerName,
+                playerStats,
                 isPlayerSide: true,
                 rules);
 
@@ -122,13 +113,64 @@ namespace Presentation
 
             ApplyEnemySlots(enemyDefs.Count);
             _combatPresenter?.Bind(_simulator);
-            _combatHud?.Bind(_simulator, _playerCharacter.DefaultSkill);
+            _combatHud?.Bind(_simulator, playerSkill);
 
             if (playEntrance)
                 _enemyEntrance?.PlayEntrance();
 
             _isTicking = true;
-            Debug.Log($"[Combat] Started vs {enemyDefs.Count} enemies.");
+            Debug.Log(
+                $"[Combat] Started as {playerName} " +
+                $"(HP {playerStats.HP}/ATK {playerStats.Attack}/DEF {playerStats.Defense}/SPD {playerStats.Speed}) " +
+                $"vs {enemyDefs.Count} enemies. Skill={playerSkill.DisplayName}");
+        }
+
+        /// <summary>
+        /// Resolves the deployed character stats/skill.
+        /// </summary>
+        private bool TryResolvePlayer(out string displayName, out StatBlock stats, out SkillDefinition skill)
+        {
+            displayName = null;
+            stats = StatBlock.Zero;
+            skill = null;
+
+            if (ServiceLocator.TryGet(out PlayerProfileService profileService) &&
+                profileService.DeployedCharacter != null)
+            {
+                var deployed = profileService.DeployedCharacter;
+                displayName = deployed.DisplayName;
+                stats = profileService.DeployedStats;
+                skill = profileService.DeployedSkill;
+
+                if (skill == null)
+                {
+                    Debug.LogError(
+                        $"CombatController: Deployed character '{displayName}' has no skill.",
+                        this);
+                    return false;
+                }
+
+                return true;
+            }
+
+            if (_playerCharacter == null)
+            {
+                Debug.LogError(
+                    "CombatController: No deployed character and no inspector player fallback.",
+                    this);
+                return false;
+            }
+
+            if (_playerCharacter.DefaultSkill == null)
+            {
+                Debug.LogError("CombatController: Player character has no default skill.", this);
+                return false;
+            }
+
+            displayName = _playerCharacter.DisplayName;
+            stats = _playerCharacter.BaseStats;
+            skill = _playerCharacter.DefaultSkill;
+            return true;
         }
 
         /// <summary>

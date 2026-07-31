@@ -107,6 +107,7 @@ namespace Exploration
         private void HandleEnterExploration()
         {
             StopAdvance();
+            UnlockDeployment();
             _encounterTrigger?.ResetEncounter();
             _combatController?.StopCombat();
             ResetScrollVisual();
@@ -129,6 +130,15 @@ namespace Exploration
 
             if (_isAdvancing)
                 return;
+
+            if (!TryLockDeployment())
+            {
+                Debug.LogWarning($"{nameof(ExplorationController)}: Cannot Advance without a selected character.", this);
+                return;
+            }
+
+            // Lock party menus for this run as soon as Advance is pressed.
+            _mainHUD?.SetPartyMenusAvailable(false);
 
             StopAdvance();
             _advanceRoutine = StartCoroutine(AdvanceRoutine());
@@ -251,6 +261,20 @@ namespace Exploration
         {
             if (_scrollRoot != null)
                 _scrollRoot.localPosition = _scrollStartLocalPosition;
+        }
+
+        private bool TryLockDeployment()
+        {
+            if (!ServiceLocator.TryGet(out PlayerProfileService profileService))
+                return false;
+
+            return profileService.TryLockDeployment();
+        }
+
+        private void UnlockDeployment()
+        {
+            if (ServiceLocator.TryGet(out PlayerProfileService profileService))
+                profileService.UnlockDeployment();
         }
     }
 }

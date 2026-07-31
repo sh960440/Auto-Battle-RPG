@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e3feb38c64c114438e7f4a7a7a7f0cc, type: 3}
+  m_Name: Character_Swordsman
+  m_EditorClassIdentifier: Assembly-CSharp::Data.CharacterDefinition
+  _displayName: Swordsman
+  _characterClass: 1
+  _baseStats:
+    HP: 90
+    Attack: 16
+    Defense: 3
+    Speed: 12
+    LifeSteal: 0
+    Tenacity: 0
+    Evasion: 0
+    Crit: 0
+    Accuracy: 0
+    MaxEnergy: 0
+  _upgradeCurve: {fileID: 11400000, guid: 10914b0a24fe41e3b4b076799a6ab596, type: 2}
+  _defaultSkill: {fileID: 11400000, guid: db52d0dea1cd4cfdac42e2499f21c30c, type: 2}

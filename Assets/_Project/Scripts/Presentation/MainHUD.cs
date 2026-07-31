@@ -27,6 +27,12 @@ namespace Presentation
             EnsureStageLabel();
         }
 
+        private void Start()
+        {
+            if (GetComponent<EquipmentCenter>() == null)
+                gameObject.AddComponent<EquipmentCenter>();
+        }
+
         private void OnEnable()
         {
             EnsureButtons();
@@ -51,14 +57,28 @@ namespace Presentation
             EnsureStageLabel();
             SetButtonActive(_advanceButton, true);
             SetAdvanceInteractable(true);
+            SetPartyMenusAvailable(true);
         }
 
         /// <summary>
-        /// Hides the Advance button.
+        /// Hides the Advance button and party menu entries.
         /// </summary>
         public void HideAllActions()
         {
             SetButtonActive(_advanceButton, false);
+            SetPartyMenusAvailable(false);
+        }
+
+        /// <summary>
+        /// Enables Characters / Equipment entries only before Advance in Exploration.
+        /// </summary>
+        public void SetPartyMenusAvailable(bool available)
+        {
+            var sheet = GetComponent<CharacterSheet>();
+            sheet?.SetEntryAvailable(available);
+
+            var equipment = GetComponent<EquipmentCenter>();
+            equipment?.SetEntryAvailable(available);
         }
 
         /// <summary>
