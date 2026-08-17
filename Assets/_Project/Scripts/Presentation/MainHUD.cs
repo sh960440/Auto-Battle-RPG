@@ -21,16 +21,23 @@ namespace Presentation
         /// </summary>
         public event Action AdvanceClicked;
 
+        /// <summary>
+        /// Fired when the player leaves Gameplay for the upgrade center.
+        /// </summary>
+        public event Action UpgradeCenterClicked;
+
+        /// <summary>
+        /// Fired when the player leaves Gameplay for the main menu.
+        /// </summary>
+        public event Action MainMenuClicked;
+
+        private Button _upgradeCenterButton;
+        private Button _mainMenuButton;
+
         private void Awake()
         {
             EnsureButtons();
             EnsureStageLabel();
-        }
-
-        private void Start()
-        {
-            if (GetComponent<EquipmentCenter>() == null)
-                gameObject.AddComponent<EquipmentCenter>();
         }
 
         private void OnEnable()
@@ -57,28 +64,24 @@ namespace Presentation
             EnsureStageLabel();
             SetButtonActive(_advanceButton, true);
             SetAdvanceInteractable(true);
-            SetPartyMenusAvailable(true);
+            SetLeaveButtonsVisible(true);
         }
 
         /// <summary>
-        /// Hides the Advance button and party menu entries.
+        /// Hides the Advance button and leave entries.
         /// </summary>
         public void HideAllActions()
         {
             SetButtonActive(_advanceButton, false);
-            SetPartyMenusAvailable(false);
+            SetLeaveButtonsVisible(false);
         }
 
         /// <summary>
-        /// Enables Characters / Equipment entries only before Advance in Exploration.
+        /// Hides leave buttons while Advance is in progress.
         /// </summary>
         public void SetPartyMenusAvailable(bool available)
         {
-            var sheet = GetComponent<CharacterSheet>();
-            sheet?.SetEntryAvailable(available);
-
-            var equipment = GetComponent<EquipmentCenter>();
-            equipment?.SetEntryAvailable(available);
+            SetLeaveButtonsVisible(available);
         }
 
         /// <summary>
@@ -116,7 +119,64 @@ namespace Presentation
             if (_advanceButton == null)
                 _advanceButton = CreateActionButton("AdvanceButton", "Advance", new Vector2(640f, -320f));
 
+            if (_upgradeCenterButton == null)
+                _upgradeCenterButton = CreateCornerButton("UpgradeCenterButton", "Upgrade", new Vector2(24f, -24f));
+
+            if (_mainMenuButton == null)
+                _mainMenuButton = CreateCornerButton("MainMenuButton", "Menu", new Vector2(24f, -92f));
+
             ApplyAdvanceAppearance();
+        }
+
+        private void SetLeaveButtonsVisible(bool visible)
+        {
+            SetButtonActive(_upgradeCenterButton, visible);
+            SetButtonActive(_mainMenuButton, visible);
+        }
+
+        private Button CreateCornerButton(string objectName, string label, Vector2 anchoredPosition)
+        {
+            var existing = transform.Find(objectName);
+            if (existing != null)
+            {
+                var existingButton = existing.GetComponent<Button>();
+                if (existingButton != null)
+                    return existingButton;
+            }
+
+            var go = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+            go.transform.SetParent(transform, false);
+
+            var rect = go.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(0f, 1f);
+            rect.sizeDelta = new Vector2(180f, 52f);
+            rect.anchoredPosition = anchoredPosition;
+
+            var image = go.GetComponent<Image>();
+            image.color = new Color(0.15f, 0.15f, 0.18f, 0.92f);
+
+            var button = go.GetComponent<Button>();
+            button.targetGraphic = image;
+            if (objectName == "UpgradeCenterButton")
+                button.onClick.AddListener(() => UpgradeCenterClicked?.Invoke());
+            else
+                button.onClick.AddListener(() => MainMenuClicked?.Invoke());
+
+            var labelGo = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+            labelGo.transform.SetParent(go.transform, false);
+            var labelRect = labelGo.GetComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = Vector2.zero;
+            labelRect.offsetMax = Vector2.zero;
+            var tmp = labelGo.GetComponent<TextMeshProUGUI>();
+            tmp.text = label;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.fontSize = 22f;
+            tmp.color = Color.white;
+            return button;
         }
 
         private void EnsureStageLabel()

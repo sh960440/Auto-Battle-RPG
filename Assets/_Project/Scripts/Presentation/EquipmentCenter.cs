@@ -24,6 +24,7 @@ namespace Presentation
         [Header("Starter Inventory (optional)")]
         [SerializeField] private EquipmentDefinition[] _starterEquipment;
         [SerializeField] private int _starterItemStage = 5;
+        [SerializeField] private bool _createHudOpenButton = true;
 
         [Header("Optional UI Hooks")]
         [SerializeField] private GameObject _panelRoot;
@@ -403,7 +404,7 @@ namespace Presentation
             if (_uiBuilt && _panelRoot != null)
                 return;
 
-            if (_openButton == null)
+            if (_createHudOpenButton && _openButton == null)
                 _openButton = CreateCornerButton("EquipmentCenterOpenButton", "Equipment", new Vector2(120f, -110f));
 
             if (_panelRoot == null)

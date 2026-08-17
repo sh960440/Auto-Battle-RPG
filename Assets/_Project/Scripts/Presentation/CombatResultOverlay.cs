@@ -22,7 +22,7 @@ namespace Presentation
         [SerializeField] private string _victoryText = "Victory";
         [SerializeField] private string _defeatText = "Defeat";
         [SerializeField] private string _continueLabel = "Continue";
-        [SerializeField] private string _returnLabel = "Character";
+        [SerializeField] private string _returnLabel = "Upgrade Center";
 
         private CombatSimulator _simulator;
 
@@ -32,7 +32,7 @@ namespace Presentation
         public event Action ContinueRequested;
 
         /// <summary>
-        /// Fired when the player chooses to return to the character page / main menu.
+        /// Fired when the player chooses to return to the upgrade center.
         /// </summary>
         public event Action ReturnRequested;
 
@@ -155,7 +155,7 @@ namespace Presentation
             ReturnRequested?.Invoke();
             Hide();
             UnbindCombatEvents();
-            SceneManager.LoadScene(SceneNames.MainMenu);
+            SceneManager.LoadScene(SceneNames.UpgradeCenter);
         }
 
         private void EnsureReturnButton()

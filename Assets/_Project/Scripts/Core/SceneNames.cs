@@ -7,6 +7,7 @@ namespace Core
     {
         public const string Boot = "Boot";
         public const string MainMenu = "MainMenu";
+        public const string UpgradeCenter = "UpgradeCenter";
         public const string Gameplay = "Gameplay";
     }
 }

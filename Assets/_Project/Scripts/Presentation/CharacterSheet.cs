@@ -16,6 +16,7 @@ namespace Presentation
         [Header("Starter Roster (used when no PlayerProfileService exists)")]
         [SerializeField] private CharacterDefinition[] _starterCharacters;
         [SerializeField] private int _startingGold = 100;
+        [SerializeField] private bool _createHudOpenButton = true;
 
         [Header("Optional UI Hooks")]
         [SerializeField] private GameObject _panelRoot;
@@ -320,7 +321,7 @@ namespace Presentation
             if (_uiBuilt && _panelRoot != null)
                 return;
 
-            if (_openButton == null)
+            if (_createHudOpenButton && _openButton == null)
                 _openButton = CreateCornerButton("CharacterSheetOpenButton", "Characters", new Vector2(120f, -40f));
 
             if (_panelRoot == null)

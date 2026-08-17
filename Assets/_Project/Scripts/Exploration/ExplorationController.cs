@@ -5,6 +5,7 @@ using Data;
 using Infrastructure;
 using Presentation;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Exploration
 {
@@ -48,7 +49,11 @@ namespace Exploration
             _stateMachine.StateEntered += HandleStateEntered;
 
             if (_mainHUD != null)
+            {
                 _mainHUD.AdvanceClicked += HandleAdvanceClicked;
+                _mainHUD.UpgradeCenterClicked += HandleLeaveToUpgradeCenter;
+                _mainHUD.MainMenuClicked += HandleLeaveToMainMenu;
+            }
 
             if (_resultOverlay != null)
             {
@@ -72,7 +77,11 @@ namespace Exploration
                 _stateMachine.StateEntered -= HandleStateEntered;
 
             if (_mainHUD != null)
+            {
                 _mainHUD.AdvanceClicked -= HandleAdvanceClicked;
+                _mainHUD.UpgradeCenterClicked -= HandleLeaveToUpgradeCenter;
+                _mainHUD.MainMenuClicked -= HandleLeaveToMainMenu;
+            }
 
             if (_resultOverlay != null)
             {
@@ -164,7 +173,17 @@ namespace Exploration
         private void HandleReturnToCharacter()
         {
             _stageProgress?.ClearLastCombatResult();
-            // Hook for the character page.
+            SceneManager.LoadScene(SceneNames.UpgradeCenter);
+        }
+
+        private static void HandleLeaveToUpgradeCenter()
+        {
+            SceneManager.LoadScene(SceneNames.UpgradeCenter);
+        }
+
+        private static void HandleLeaveToMainMenu()
+        {
+            SceneManager.LoadScene(SceneNames.MainMenu);
         }
 
         private void HandleStageChanged(int stage)
