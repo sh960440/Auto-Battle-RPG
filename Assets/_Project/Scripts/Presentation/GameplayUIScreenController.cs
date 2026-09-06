@@ -11,7 +11,6 @@ namespace Presentation
     {
         [SerializeField] private GameObject _mainHUDRoot;
         [SerializeField] private GameObject _combatHUDRoot;
-        [SerializeField] private GameObject _resultPopupRoot;
 
         private GameStateMachine _stateMachine;
 
@@ -41,14 +40,10 @@ namespace Presentation
         private void ApplyScreen(GameState state)
         {
             if (_mainHUDRoot != null)
-                _mainHUDRoot.SetActive(state == GameState.Exploration);
+                _mainHUDRoot.SetActive(true);
 
             if (_combatHUDRoot != null)
                 _combatHUDRoot.SetActive(state == GameState.Combat || state == GameState.Result);
-
-            // Stay active in Combat so the overlay can reveal its inner root on fight end.
-            if (_resultPopupRoot != null)
-                _resultPopupRoot.SetActive(state == GameState.Combat || state == GameState.Result);
         }
     }
 }

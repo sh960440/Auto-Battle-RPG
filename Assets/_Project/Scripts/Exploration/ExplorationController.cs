@@ -56,10 +56,7 @@ namespace Exploration
             }
 
             if (_resultOverlay != null)
-            {
                 _resultOverlay.ContinueRequested += HandleContinueAdvance;
-                _resultOverlay.ReturnRequested += HandleReturnToCharacter;
-            }
 
             if (_encounterTrigger != null)
                 _encounterTrigger.EncounterReady += HandleEncounterReady;
@@ -84,10 +81,7 @@ namespace Exploration
             }
 
             if (_resultOverlay != null)
-            {
                 _resultOverlay.ContinueRequested -= HandleContinueAdvance;
-                _resultOverlay.ReturnRequested -= HandleReturnToCharacter;
-            }
 
             if (_encounterTrigger != null)
                 _encounterTrigger.EncounterReady -= HandleEncounterReady;
@@ -168,12 +162,6 @@ namespace Exploration
 
             _stageProgress?.ClearLastCombatResult();
             _stateMachine.SetState(GameState.Exploration);
-        }
-
-        private void HandleReturnToCharacter()
-        {
-            _stageProgress?.ClearLastCombatResult();
-            SceneManager.LoadScene(SceneNames.UpgradeCenter);
         }
 
         private static void HandleLeaveToUpgradeCenter()

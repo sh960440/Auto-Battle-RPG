@@ -16,7 +16,6 @@ namespace Presentation
         [Header("Starter Roster (used when no PlayerProfileService exists)")]
         [SerializeField] private CharacterDefinition[] _starterCharacters;
         [SerializeField] private int _startingGold = 100;
-        [SerializeField] private bool _createHudOpenButton = true;
 
         [Header("Optional UI Hooks")]
         [SerializeField] private GameObject _panelRoot;
@@ -32,7 +31,6 @@ namespace Presentation
         [SerializeField] private TMP_Text _skillLabel;
 
         private PlayerProfileService _profileService;
-        private bool _uiBuilt;
         private bool _entryAvailable = true;
 
         public bool IsOpen => _panelRoot != null && _panelRoot.activeSelf;
@@ -318,156 +316,6 @@ namespace Presentation
 
         private void EnsureUi()
         {
-            if (_uiBuilt && _panelRoot != null)
-                return;
-
-            if (_createHudOpenButton && _openButton == null)
-                _openButton = CreateCornerButton("CharacterSheetOpenButton", "Characters", new Vector2(120f, -40f));
-
-            if (_panelRoot == null)
-                BuildPanel();
-
-            _uiBuilt = true;
-        }
-
-        private void BuildPanel()
-        {
-            var panel = new GameObject("CharacterSheetPanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-            panel.transform.SetParent(transform, false);
-
-            var panelRect = panel.GetComponent<RectTransform>();
-            panelRect.anchorMin = new Vector2(0.5f, 0.5f);
-            panelRect.anchorMax = new Vector2(0.5f, 0.5f);
-            panelRect.pivot = new Vector2(0.5f, 0.5f);
-            panelRect.sizeDelta = new Vector2(720f, 520f);
-            panelRect.anchoredPosition = Vector2.zero;
-
-            var panelImage = panel.GetComponent<Image>();
-            panelImage.color = new Color(0.08f, 0.09f, 0.12f, 0.96f);
-
-            _panelRoot = panel;
-
-            _nameLabel = CreateLabel(panel.transform, "NameLabel", 28f, new Vector2(0f, 220f), new Vector2(640f, 40f));
-            _classLabel = CreateLabel(panel.transform, "ClassLabel", 22f, new Vector2(0f, 175f), new Vector2(640f, 32f));
-            _levelLabel = CreateLabel(panel.transform, "LevelLabel", 22f, new Vector2(0f, 140f), new Vector2(640f, 32f));
-            _statsLabel = CreateLabel(panel.transform, "StatsLabel", 22f, new Vector2(0f, 95f), new Vector2(640f, 36f));
-            _equipmentLabel = CreateLabel(panel.transform, "EquipmentLabel", 20f, new Vector2(0f, -20f), new Vector2(640f, 180f));
-            _equipmentLabel.alignment = TextAlignmentOptions.TopLeft;
-            _skillLabel = CreateLabel(panel.transform, "SkillLabel", 20f, new Vector2(0f, -180f), new Vector2(640f, 90f));
-            _skillLabel.alignment = TextAlignmentOptions.TopLeft;
-
-            _prevButton = CreatePanelButton(panel.transform, "PrevButton", "<", new Vector2(-300f, -230f));
-            _nextButton = CreatePanelButton(panel.transform, "NextButton", ">", new Vector2(-200f, -230f));
-            _closeButton = CreatePanelButton(panel.transform, "CloseButton", "Close", new Vector2(260f, -230f), new Vector2(140f, 48f));
-        }
-
-        private Button CreateCornerButton(string objectName, string label, Vector2 anchoredPosition)
-        {
-            var existing = transform.Find(objectName);
-            if (existing != null)
-            {
-                var existingButton = existing.GetComponent<Button>();
-                if (existingButton != null)
-                    return existingButton;
-            }
-
-            var go = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
-            go.transform.SetParent(transform, false);
-
-            var rect = go.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = new Vector2(0f, 1f);
-            rect.pivot = new Vector2(0f, 1f);
-            rect.sizeDelta = new Vector2(200f, 56f);
-            rect.anchoredPosition = anchoredPosition;
-
-            var image = go.GetComponent<Image>();
-            image.color = new Color(0.15f, 0.15f, 0.18f, 0.92f);
-
-            var button = go.GetComponent<Button>();
-            button.targetGraphic = image;
-
-            var labelGo = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-            labelGo.transform.SetParent(go.transform, false);
-            Stretch(labelGo.GetComponent<RectTransform>());
-
-            var tmp = labelGo.GetComponent<TextMeshProUGUI>();
-            tmp.text = label;
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.fontSize = 24f;
-            tmp.color = Color.white;
-
-            return button;
-        }
-
-        private static Button CreatePanelButton(
-            Transform parent,
-            string objectName,
-            string label,
-            Vector2 anchoredPosition,
-            Vector2? size = null)
-        {
-            var go = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
-            go.transform.SetParent(parent, false);
-
-            var rect = go.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.5f, 0.5f);
-            rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.sizeDelta = size ?? new Vector2(72f, 48f);
-            rect.anchoredPosition = anchoredPosition;
-
-            var image = go.GetComponent<Image>();
-            image.color = new Color(0.2f, 0.22f, 0.28f, 1f);
-
-            var button = go.GetComponent<Button>();
-            button.targetGraphic = image;
-
-            var labelGo = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-            labelGo.transform.SetParent(go.transform, false);
-            Stretch(labelGo.GetComponent<RectTransform>());
-
-            var tmp = labelGo.GetComponent<TextMeshProUGUI>();
-            tmp.text = label;
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.fontSize = 22f;
-            tmp.color = Color.white;
-
-            return button;
-        }
-
-        private static TextMeshProUGUI CreateLabel(
-            Transform parent,
-            string objectName,
-            float fontSize,
-            Vector2 anchoredPosition,
-            Vector2 size)
-        {
-            var go = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-            go.transform.SetParent(parent, false);
-
-            var rect = go.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.5f, 0.5f);
-            rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.sizeDelta = size;
-            rect.anchoredPosition = anchoredPosition;
-
-            var tmp = go.GetComponent<TextMeshProUGUI>();
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.fontSize = fontSize;
-            tmp.color = Color.white;
-            tmp.text = string.Empty;
-            tmp.textWrappingMode = TextWrappingModes.Normal;
-            return tmp;
-        }
-
-        private static void Stretch(RectTransform rect)
-        {
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
         }
 
         private static void SetText(TMP_Text label, string value)

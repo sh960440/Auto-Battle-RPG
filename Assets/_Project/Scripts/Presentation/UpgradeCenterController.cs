@@ -3,53 +3,120 @@ using Data;
 using Infrastructure;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Presentation
 {
     /// <summary>
-    /// Hub for roster, equipment, and gold upgrades. Loads Gameplay or MainMenu.
+    /// Upgrade Center hub: tabs, roster select, upgrades, and scene navigation.
     /// </summary>
     public class UpgradeCenterController : MonoBehaviour
     {
         private enum HubTab
         {
-            Characters,
-            Equipment,
-            Upgrade
+            Stat = 0,
+            Skills = 1,
+            Equipment = 2
         }
+
+        [Header("Tabs")]
+        [SerializeField] private Button _statTabButton;
+        [SerializeField] private Button _skillsTabButton;
+        [SerializeField] private Button _equipmentTabButton;
+        [SerializeField] private GameObject _statPanel;
+        [SerializeField] private GameObject _skillsPanel;
+        [SerializeField] private GameObject _equipmentPanel;
+
+        [Header("Navigation / Gold")]
+        [SerializeField] private Button _playButton;
+        [SerializeField] private Button _mainMenuButton;
+        [SerializeField] private TMP_Text _coinAmountText;
+
+        [Header("Roster")]
+        [SerializeField] private Button[] _characterButtons;
+        [SerializeField] private TMP_Text _characterNameText;
+        [SerializeField] private Image _characterImage;
+
+        [Header("Stats / Upgrade")]
+        [SerializeField] private TMP_Text _levelAmountText;
+        [SerializeField] private TMP_Text _hpAmountText;
+        [SerializeField] private TMP_Text _atkAmountText;
+        [SerializeField] private TMP_Text _defAmountText;
+        [SerializeField] private TMP_Text _spdAmountText;
+        [SerializeField] private TMP_Text _costAmountText;
+        [SerializeField] private Button _levelUpButton;
+        [SerializeField] private Color _statNormalColor = Color.white;
+        [SerializeField] private Color _statPreviewColor = new Color(0.45f, 0.95f, 0.55f, 1f);
+
+        [Header("Equipped Slots")]
+        [SerializeField] private Image _leftHandSlot;
+        [SerializeField] private Image _rightHandSlot;
+        [SerializeField] private Image _upperBodySlot;
+        [SerializeField] private Image _lowerBodySlot;
+        [SerializeField] private Color _slotEmptyColor = new Color(1f, 1f, 1f, 0.35f);
+        [SerializeField] private Color _slotFilledColor = new Color(1f, 1f, 1f, 1f);
+
+        [Header("Skills")]
+        [SerializeField] private GameObject _skill1Root;
+        [SerializeField] private TMP_Text _skill1NameText;
+        [SerializeField] private TMP_Text _skill1EnergyText;
+        [SerializeField] private TMP_Text _skill1EffectText;
+        [SerializeField] private TMP_Text _skill1DescriptionText;
+        [SerializeField] private GameObject _skill2Root;
+        [SerializeField] private TMP_Text _skill2NameText;
+        [SerializeField] private TMP_Text _skill2DescriptionText;
 
         private CharacterSheet _characterSheet;
         private EquipmentCenter _equipmentCenter;
         private ProgressionService _progression;
         private PlayerProfileService _profileService;
-        private HubTab _tab = HubTab.Characters;
-
-        private TMP_Text _goldLabel;
-        private TMP_Text _upgradeBody;
-        private Button _upgradeButton;
-        private GameObject _upgradePanel;
+        private HubTab _tab = HubTab.Stat;
+        private bool _previewNextLevel;
+        private readonly UnityEngine.Events.UnityAction[] _characterClickActions = new UnityEngine.Events.UnityAction[8];
+        private UnityEngine.Events.UnityAction _statTabAction;
+        private UnityEngine.Events.UnityAction _skillsTabAction;
+        private UnityEngine.Events.UnityAction _equipmentTabAction;
+        private UnityEngine.Events.UnityAction _playAction;
+        private UnityEngine.Events.UnityAction _mainMenuAction;
+        private UnityEngine.Events.UnityAction _levelUpAction;
 
         private void Awake()
         {
             _progression = new ProgressionService();
+            _statTabAction = () => ShowTab(HubTab.Stat);
+            _skillsTabAction = () => ShowTab(HubTab.Skills);
+            _equipmentTabAction = () => ShowTab(HubTab.Equipment);
+            _playAction = LoadGameplay;
+            _mainMenuAction = LoadMainMenu;
+            _levelUpAction = HandleLevelUp;
             EnsurePartyComponents();
-            BuildChrome();
-            ShowTab(HubTab.Characters);
+            WireLevelUpHover();
+            ShowTab(HubTab.Stat);
+            Refresh();
         }
 
         private void OnEnable()
         {
-            if (ServiceLocator.TryGet(out _profileService))
+            BindChrome(true);
+
+            if (_profileService == null)
+                ServiceLocator.TryGet(out _profileService);
+
+            if (_profileService != null)
             {
                 _profileService.SelectionChanged += Refresh;
                 _profileService.LoadoutChanged += Refresh;
             }
+
+            Refresh();
         }
 
         private void OnDisable()
         {
+            BindChrome(false);
+
             if (_profileService != null)
             {
                 _profileService.SelectionChanged -= Refresh;
@@ -60,103 +127,296 @@ namespace Presentation
         private void EnsurePartyComponents()
         {
             _characterSheet = GetComponent<CharacterSheet>();
-            if (_characterSheet == null)
-                _characterSheet = gameObject.AddComponent<CharacterSheet>();
-
             _equipmentCenter = GetComponent<EquipmentCenter>();
-            if (_equipmentCenter == null)
-                _equipmentCenter = gameObject.AddComponent<EquipmentCenter>();
-
-            _characterSheet.EnsureProfileServiceForDependents();
+            _characterSheet?.EnsureProfileServiceForDependents();
             ServiceLocator.TryGet(out _profileService);
+        }
+
+        private void BindChrome(bool bind)
+        {
+            BindButton(_statTabButton, _statTabAction, bind);
+            BindButton(_skillsTabButton, _skillsTabAction, bind);
+            BindButton(_equipmentTabButton, _equipmentTabAction, bind);
+            BindButton(_playButton, _playAction, bind);
+            BindButton(_mainMenuButton, _mainMenuAction, bind);
+            BindButton(_levelUpButton, _levelUpAction, bind);
+            BindCharacterButtons(bind);
+        }
+
+        private void BindCharacterButtons(bool bind)
+        {
+            if (_characterButtons == null)
+                return;
+
+            for (var i = 0; i < _characterButtons.Length; i++)
+            {
+                var button = _characterButtons[i];
+                if (button == null)
+                    continue;
+
+                if (_characterClickActions[i] != null)
+                    button.onClick.RemoveListener(_characterClickActions[i]);
+
+                if (!bind)
+                    continue;
+
+                var index = i;
+                UnityEngine.Events.UnityAction action = () => HandleSelectCharacter(index);
+                _characterClickActions[i] = action;
+                button.onClick.AddListener(action);
+            }
+        }
+
+        private void WireLevelUpHover()
+        {
+            if (_levelUpButton == null)
+                return;
+
+            var trigger = _levelUpButton.GetComponent<EventTrigger>();
+            if (trigger == null)
+                trigger = _levelUpButton.gameObject.AddComponent<EventTrigger>();
+
+            trigger.triggers.Clear();
+            AddPointerEntry(trigger, EventTriggerType.PointerEnter, _ =>
+            {
+                _previewNextLevel = true;
+                RefreshStatsAndCost();
+            });
+            AddPointerEntry(trigger, EventTriggerType.PointerExit, _ =>
+            {
+                _previewNextLevel = false;
+                RefreshStatsAndCost();
+            });
+        }
+
+        private static void AddPointerEntry(
+            EventTrigger trigger,
+            EventTriggerType type,
+            UnityEngine.Events.UnityAction<BaseEventData> callback)
+        {
+            var entry = new EventTrigger.Entry { eventID = type };
+            entry.callback.AddListener(callback);
+            trigger.triggers.Add(entry);
         }
 
         private void ShowTab(HubTab tab)
         {
             _tab = tab;
-            _characterSheet.Hide();
-            _equipmentCenter.Hide();
-            HideUpgradePanel();
 
-            if (tab == HubTab.Characters)
-                _characterSheet.Show();
-            else if (tab == HubTab.Equipment)
-                _equipmentCenter.Show();
-            else
-                ShowUpgradePanel();
+            if (_statPanel != null)
+                _statPanel.SetActive(tab == HubTab.Stat);
+            if (_skillsPanel != null)
+                _skillsPanel.SetActive(tab == HubTab.Skills);
+            if (_equipmentPanel != null)
+                _equipmentPanel.SetActive(tab == HubTab.Equipment);
 
-            Refresh();
+            if (tab == HubTab.Equipment)
+                _equipmentCenter?.Refresh();
         }
 
         private void Refresh()
         {
-            if (_goldLabel != null && _profileService != null)
-                _goldLabel.text = $"Gold {_profileService.Profile.Gold}";
+            RefreshGold();
+            RefreshRosterButtons();
+            RefreshSelectedCharacter();
+            RefreshStatsAndCost();
+            RefreshEquipmentSlots();
+            RefreshSkills();
 
-            if (_tab == HubTab.Upgrade)
-                RefreshUpgradeBody();
-            else if (_tab == HubTab.Characters)
-                _characterSheet.Refresh();
-            else
-                _equipmentCenter.Refresh();
+            if (_tab == HubTab.Equipment)
+                _equipmentCenter?.Refresh();
         }
 
-        private void ShowUpgradePanel()
+        private void RefreshGold()
         {
-            if (_upgradePanel != null)
-                _upgradePanel.SetActive(true);
-
-            RefreshUpgradeBody();
-        }
-
-        private void HideUpgradePanel()
-        {
-            if (_upgradePanel != null)
-                _upgradePanel.SetActive(false);
-        }
-
-        private void RefreshUpgradeBody()
-        {
-            if (_upgradeBody == null)
+            if (_coinAmountText == null)
                 return;
 
+            var gold = _profileService?.Profile?.Gold ?? 0;
+            _coinAmountText.text = gold.ToString();
+        }
+
+        private void RefreshRosterButtons()
+        {
+            var characters = _profileService?.Profile?.Characters;
+            var selectedIndex = _profileService?.Profile?.SelectedIndex ?? -1;
+            var count = characters?.Count ?? 0;
+
+            if (_characterButtons == null)
+                return;
+
+            for (var i = 0; i < _characterButtons.Length; i++)
+            {
+                var button = _characterButtons[i];
+                if (button == null)
+                    continue;
+
+                var unlocked = i < count;
+                button.interactable = unlocked;
+
+                var image = button.targetGraphic as Image;
+                if (image == null)
+                    image = button.GetComponent<Image>();
+
+                if (!unlocked)
+                {
+                    if (image != null)
+                    {
+                        image.sprite = null;
+                        image.color = new Color(1f, 1f, 1f, 0.25f);
+                    }
+
+                    continue;
+                }
+
+                var character = characters[i];
+                if (image != null)
+                {
+                    image.sprite = character.Definition != null ? character.Definition.Portrait : null;
+                    image.color = i == selectedIndex
+                        ? Color.white
+                        : new Color(1f, 1f, 1f, 0.85f);
+                }
+            }
+        }
+
+        private void RefreshSelectedCharacter()
+        {
             var character = _profileService?.Profile?.SelectedCharacter;
             if (character == null)
             {
-                _upgradeBody.text = "No character selected.";
-                if (_upgradeButton != null)
-                    _upgradeButton.interactable = false;
+                SetText(_characterNameText, string.Empty);
+                if (_characterImage != null)
+                {
+                    _characterImage.sprite = null;
+                    _characterImage.enabled = false;
+                }
+
                 return;
             }
 
-            var current = StatCalculator.Calculate(character);
-            var next = _progression.PreviewStatsAfterUpgrade(character);
+            SetText(_characterNameText, CharacterClassRules.GetDisplayName(character.CharacterClass));
+
+            if (_characterImage != null)
+            {
+                var portrait = character.Definition != null ? character.Definition.Portrait : null;
+                _characterImage.sprite = portrait;
+                _characterImage.enabled = portrait != null;
+                _characterImage.color = Color.white;
+            }
+        }
+
+        private void RefreshStatsAndCost()
+        {
+            var character = _profileService?.Profile?.SelectedCharacter;
+            if (character == null)
+            {
+                SetText(_levelAmountText, "-");
+                SetText(_hpAmountText, "-");
+                SetText(_atkAmountText, "-");
+                SetText(_defAmountText, "-");
+                SetText(_spdAmountText, "-");
+                SetText(_costAmountText, "-");
+                if (_levelUpButton != null)
+                    _levelUpButton.interactable = false;
+                return;
+            }
+
+            var showPreview = _previewNextLevel &&
+                              _progression.GetNextLevelCost(character) > 0;
+            var stats = showPreview
+                ? _progression.PreviewStatsAfterUpgrade(character)
+                : StatCalculator.Calculate(character);
+            var color = showPreview ? _statPreviewColor : _statNormalColor;
+
+            SetText(_levelAmountText, showPreview ? (character.Level + 1).ToString() : character.Level.ToString());
+            SetStatText(_hpAmountText, stats.HP, color);
+            SetStatText(_atkAmountText, stats.Attack, color);
+            SetStatText(_defAmountText, stats.Defense, color);
+            SetStatText(_spdAmountText, stats.Speed, color);
+
             var cost = _progression.GetNextLevelCost(character);
-            var can = _progression.CanUpgrade(_profileService.Profile, character);
+            SetText(_costAmountText, cost > 0 ? cost.ToString() : "-");
 
-            if (cost <= 0)
-            {
-                _upgradeBody.text =
-                    $"{character.DisplayName}  Lv{character.Level} (max)\n" +
-                    $"HP {current.HP}   ATK {current.Attack}   DEF {current.Defense}   SPD {current.Speed}";
-            }
-            else
-            {
-                _upgradeBody.text =
-                    $"{character.DisplayName}  Lv{character.Level} → {character.Level + 1}\n" +
-                    $"Now   HP {current.HP}  ATK {current.Attack}  DEF {current.Defense}  SPD {current.Speed}\n" +
-                    $"Next  HP {next.HP}  ATK {next.Attack}  DEF {next.Defense}  SPD {next.Speed}\n" +
-                    $"Cost  {cost} gold";
-            }
-
-            if (_upgradeButton != null)
-                _upgradeButton.interactable = can;
+            if (_levelUpButton != null)
+                _levelUpButton.interactable = _progression.CanUpgrade(_profileService.Profile, character);
         }
 
-        private void HandleUpgrade()
+        private void RefreshEquipmentSlots()
         {
             var character = _profileService?.Profile?.SelectedCharacter;
-            if (character == null)
+            ApplySlot(_leftHandSlot, character, EquipmentSlot.LeftHand);
+            ApplySlot(_rightHandSlot, character, EquipmentSlot.RightHand);
+            ApplySlot(_upperBodySlot, character, EquipmentSlot.UpperBody);
+            ApplySlot(_lowerBodySlot, character, EquipmentSlot.LowerBody);
+        }
+
+        private void ApplySlot(Image slot, CharacterInstance character, EquipmentSlot equipmentSlot)
+        {
+            if (slot == null)
+                return;
+
+            var filled = character != null && character.TryGetEquipment(equipmentSlot, out _);
+            slot.color = filled ? _slotFilledColor : _slotEmptyColor;
+        }
+
+        private void RefreshSkills()
+        {
+            if (_skill2Root != null)
+                _skill2Root.SetActive(true);
+
+            // Skill2 stays locked for v1.
+            SetSkill2Locked();
+
+            var skill = _profileService?.Profile?.SelectedCharacter?.DefaultSkill;
+            if (skill == null)
+            {
+                SetText(_skill1NameText, string.Empty);
+                SetText(_skill1EnergyText, string.Empty);
+                SetText(_skill1EffectText, string.Empty);
+                SetText(_skill1DescriptionText, string.Empty);
+                return;
+            }
+
+            SetText(_skill1NameText, skill.DisplayName);
+            SetText(_skill1EnergyText, skill.EnergyCost.ToString());
+            SetText(_skill1EffectText, $"x{skill.DamageMultiplier:0.##} damage");
+            SetText(_skill1DescriptionText, skill.Description);
+        }
+
+        private void SetSkill2Locked()
+        {
+            if (_skill2Root == null)
+                return;
+
+            var canvasGroup = _skill2Root.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                canvasGroup = _skill2Root.AddComponent<CanvasGroup>();
+
+            canvasGroup.alpha = 0.45f;
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+
+            SetText(_skill2NameText, "Locked");
+            SetText(_skill2DescriptionText, "Not unlocked");
+        }
+
+        private void HandleSelectCharacter(int index)
+        {
+            if (_profileService == null)
+                return;
+
+            if (index < 0 || index >= _profileService.Profile.Characters.Count)
+                return;
+
+            _previewNextLevel = false;
+            _profileService.SelectByIndex(index);
+        }
+
+        private void HandleLevelUp()
+        {
+            var character = _profileService?.Profile?.SelectedCharacter;
+            if (character == null || _profileService == null)
                 return;
 
             if (!_progression.TryUpgrade(_profileService.Profile, character))
@@ -166,135 +426,33 @@ namespace Presentation
             Refresh();
         }
 
-        private void HandlePrev() => _profileService?.SelectPrevious();
-
-        private void HandleNext() => _profileService?.SelectNext();
-
         private static void LoadGameplay() => SceneManager.LoadScene(SceneNames.Gameplay);
 
-        private static void LoadMenu() => SceneManager.LoadScene(SceneNames.MainMenu);
+        private static void LoadMainMenu() => SceneManager.LoadScene(SceneNames.MainMenu);
 
-        private void BuildChrome()
+        private static void BindButton(Button button, UnityEngine.Events.UnityAction action, bool bind)
         {
-            var gold = CreateLabel("GoldLabel", 26f, new Vector2(0f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -24f), new Vector2(400f, 40f));
-            _goldLabel = gold;
+            if (button == null)
+                return;
 
-            CreateNavButton("TabCharacters", "Characters", new Vector2(-280f, 240f), () => ShowTab(HubTab.Characters));
-            CreateNavButton("TabEquipment", "Equipment", new Vector2(-80f, 240f), () => ShowTab(HubTab.Equipment));
-            CreateNavButton("TabUpgrade", "Upgrade", new Vector2(120f, 240f), () => ShowTab(HubTab.Upgrade));
-
-            CreateNavButton("PlayButton", "Play", new Vector2(280f, -280f), LoadGameplay, new Vector2(180f, 56f));
-            CreateNavButton("MenuButton", "Menu", new Vector2(-280f, -280f), LoadMenu, new Vector2(180f, 56f));
-
-            BuildUpgradePanel();
+            button.onClick.RemoveListener(action);
+            if (bind)
+                button.onClick.AddListener(action);
         }
 
-        private void BuildUpgradePanel()
+        private static void SetText(TMP_Text label, string value)
         {
-            var panel = new GameObject("UpgradePanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-            panel.transform.SetParent(transform, false);
-            var rect = panel.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.5f, 0.5f);
-            rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.sizeDelta = new Vector2(720f, 420f);
-            rect.anchoredPosition = new Vector2(0f, -20f);
-            panel.GetComponent<Image>().color = new Color(0.08f, 0.09f, 0.12f, 0.96f);
-            _upgradePanel = panel;
-
-            _upgradeBody = CreateChildLabel(panel.transform, "UpgradeBody", 22f, Vector2.zero, new Vector2(640f, 220f));
-            _upgradeBody.alignment = TextAlignmentOptions.Center;
-
-            CreateChildButton(panel.transform, "Prev", "<", new Vector2(-260f, -150f), new Vector2(72f, 48f), HandlePrev);
-            CreateChildButton(panel.transform, "Next", ">", new Vector2(-160f, -150f), new Vector2(72f, 48f), HandleNext);
-            _upgradeButton = CreateChildButton(panel.transform, "UpgradeButton", "Upgrade", new Vector2(200f, -150f), new Vector2(180f, 48f), HandleUpgrade);
-            _upgradePanel.SetActive(false);
+            if (label != null)
+                label.text = value ?? string.Empty;
         }
 
-        private TMP_Text CreateLabel(
-            string objectName,
-            float fontSize,
-            Vector2 anchorMin,
-            Vector2 anchorMax,
-            Vector2 anchoredPosition,
-            Vector2 size)
+        private static void SetStatText(TMP_Text label, int value, Color color)
         {
-            var go = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-            go.transform.SetParent(transform, false);
-            var rect = go.GetComponent<RectTransform>();
-            rect.anchorMin = anchorMin;
-            rect.anchorMax = anchorMax;
-            rect.pivot = new Vector2(0.5f, 1f);
-            rect.sizeDelta = size;
-            rect.anchoredPosition = anchoredPosition;
-            var tmp = go.GetComponent<TextMeshProUGUI>();
-            tmp.fontSize = fontSize;
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.color = Color.white;
-            tmp.text = "Gold 0";
-            return tmp;
-        }
+            if (label == null)
+                return;
 
-        private void CreateNavButton(string objectName, string label, Vector2 anchoredPosition, UnityEngine.Events.UnityAction onClick, Vector2? size = null)
-        {
-            var button = CreateChildButton(transform, objectName, label, anchoredPosition, size ?? new Vector2(180f, 48f), onClick);
-            var rect = button.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.5f, 0.5f);
-            rect.anchorMax = new Vector2(0.5f, 0.5f);
-        }
-
-        private static Button CreateChildButton(
-            Transform parent,
-            string objectName,
-            string label,
-            Vector2 anchoredPosition,
-            Vector2 size,
-            UnityEngine.Events.UnityAction onClick)
-        {
-            var go = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
-            go.transform.SetParent(parent, false);
-            var rect = go.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.5f, 0.5f);
-            rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.sizeDelta = size;
-            rect.anchoredPosition = anchoredPosition;
-            go.GetComponent<Image>().color = new Color(0.2f, 0.22f, 0.28f, 1f);
-            var button = go.GetComponent<Button>();
-            button.onClick.AddListener(onClick);
-
-            var labelGo = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-            labelGo.transform.SetParent(go.transform, false);
-            var labelRect = labelGo.GetComponent<RectTransform>();
-            labelRect.anchorMin = Vector2.zero;
-            labelRect.anchorMax = Vector2.one;
-            labelRect.offsetMin = Vector2.zero;
-            labelRect.offsetMax = Vector2.zero;
-            var tmp = labelGo.GetComponent<TextMeshProUGUI>();
-            tmp.text = label;
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.fontSize = 22f;
-            tmp.color = Color.white;
-            return button;
-        }
-
-        private static TextMeshProUGUI CreateChildLabel(
-            Transform parent,
-            string objectName,
-            float fontSize,
-            Vector2 anchoredPosition,
-            Vector2 size)
-        {
-            var go = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-            go.transform.SetParent(parent, false);
-            var rect = go.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.5f, 0.5f);
-            rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.sizeDelta = size;
-            rect.anchoredPosition = anchoredPosition;
-            var tmp = go.GetComponent<TextMeshProUGUI>();
-            tmp.fontSize = fontSize;
-            tmp.color = Color.white;
-            tmp.textWrappingMode = TextWrappingModes.Normal;
-            return tmp;
+            label.text = value.ToString();
+            label.color = color;
         }
     }
 }

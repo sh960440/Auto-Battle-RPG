@@ -1,77 +1,42 @@
 using System;
 using Combat;
-using Core;
-using Infrastructure;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Presentation
 {
     /// <summary>
-    /// Temporary result popup
+    /// Combat result window.
     /// </summary>
     public class CombatResultOverlay : MonoBehaviour
     {
         [SerializeField] private GameObject _root;
-        [SerializeField] private TMP_Text _resultLabel;
-        [SerializeField] private TMP_Text _stageLabel;
-        [SerializeField] private Button _continueButton;
-        [SerializeField] private Button _returnButton;
-        [SerializeField] private string _victoryText = "Victory";
-        [SerializeField] private string _defeatText = "Defeat";
-        [SerializeField] private string _continueLabel = "Continue";
-        [SerializeField] private string _returnLabel = "Upgrade Center";
+        [SerializeField] private GameObject _victoryText;
+        [SerializeField] private GameObject _defeatText;
+        [SerializeField] private TMP_Text _lootLabel;
+        [SerializeField] private Button _confirmButton;
 
         private CombatSimulator _simulator;
 
         /// <summary>
-        /// Fired when the player chooses to continue exploring.
+        /// Fired when the player confirms the result and returns to exploration.
         /// </summary>
         public event Action ContinueRequested;
 
-        /// <summary>
-        /// Fired when the player chooses to return to the upgrade center.
-        /// </summary>
-        public event Action ReturnRequested;
-
-        /// <summary>
-        /// Alias for <see cref="ContinueRequested"/>.
-        /// </summary>
-        public event Action Continued
-        {
-            add => ContinueRequested += value;
-            remove => ContinueRequested -= value;
-        }
-
-        private void Awake()
-        {
-            EnsureReturnButton();
-            Hide();
-        }
-
         private void OnEnable()
         {
-            if (_continueButton != null)
-                _continueButton.onClick.AddListener(HandleContinue);
+            if (_confirmButton != null)
+                _confirmButton.onClick.AddListener(HandleConfirm);
 
-            if (_returnButton != null)
-                _returnButton.onClick.AddListener(HandleReturn);
-
-            // Only re-show for a still-bound finished combat. Do not use the persisted
-            // stage result here, or a fresh combat would immediately pop the overlay.
             if (_simulator != null && _simulator.IsFinished && _simulator.Result.HasValue)
                 Show(_simulator.Result.Value);
         }
 
         private void OnDisable()
         {
-            if (_continueButton != null)
-                _continueButton.onClick.RemoveListener(HandleContinue);
-
-            if (_returnButton != null)
-                _returnButton.onClick.RemoveListener(HandleReturn);
+            if (_confirmButton != null)
+                _confirmButton.onClick.RemoveListener(HandleConfirm);
         }
 
         /// <summary>
@@ -119,82 +84,30 @@ namespace Presentation
 
         private void Show(CombatResult result)
         {
-            EnsureReturnButton();
-            gameObject.SetActive(true);
+            var window = _root != null ? _root : gameObject;
+            window.SetActive(true);
 
-            if (_root != null)
-                _root.SetActive(true);
+            var victory = result == CombatResult.Victory;
+            if (_victoryText != null)
+                _victoryText.SetActive(victory);
+            if (_defeatText != null)
+                _defeatText.SetActive(!victory);
 
-            if (_resultLabel != null)
-                _resultLabel.text = result == CombatResult.Victory ? _victoryText : _defeatText;
-
-            if (_stageLabel != null && ServiceLocator.TryGet(out StageProgressService progress))
-            {
-                _stageLabel.text = $"Stage {progress.StageBeforeLastChange} → {progress.CurrentStage}";
-            }
-
-            SetButtonLabel(_continueButton, _continueLabel);
-            SetButtonLabel(_returnButton, _returnLabel);
+            if (_lootLabel != null)
+                _lootLabel.enabled = true;
         }
 
         private void Hide()
         {
-            if (_root != null)
-                _root.SetActive(false);
+            var window = _root != null ? _root : gameObject;
+            window.SetActive(false);
         }
 
-        private void HandleContinue()
+        private void HandleConfirm()
         {
             ContinueRequested?.Invoke();
             Hide();
             UnbindCombatEvents();
-        }
-
-        private void HandleReturn()
-        {
-            ReturnRequested?.Invoke();
-            Hide();
-            UnbindCombatEvents();
-            SceneManager.LoadScene(SceneNames.UpgradeCenter);
-        }
-
-        private void EnsureReturnButton()
-        {
-            if (_returnButton != null || _continueButton == null)
-                return;
-
-            var existing = transform.Find("ReturnButton");
-            if (existing != null)
-            {
-                _returnButton = existing.GetComponent<Button>();
-                if (_returnButton != null)
-                    return;
-            }
-
-            var template = _continueButton.gameObject;
-            var clone = Instantiate(template, template.transform.parent);
-            clone.name = "ReturnButton";
-
-            var rect = clone.GetComponent<RectTransform>();
-            if (rect != null)
-            {
-                var continueRect = template.GetComponent<RectTransform>();
-                if (continueRect != null)
-                    rect.anchoredPosition = continueRect.anchoredPosition + new Vector2(0f, -90f);
-            }
-
-            _returnButton = clone.GetComponent<Button>();
-            SetButtonLabel(_returnButton, _returnLabel);
-        }
-
-        private static void SetButtonLabel(Button button, string label)
-        {
-            if (button == null || string.IsNullOrEmpty(label))
-                return;
-
-            var tmp = button.GetComponentInChildren<TMP_Text>(true);
-            if (tmp != null)
-                tmp.text = label;
         }
     }
 }

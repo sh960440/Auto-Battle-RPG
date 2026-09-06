@@ -10,6 +10,7 @@ namespace Data
     {
         [SerializeField] private string _displayName;
         [SerializeField] private CharacterClass _characterClass = CharacterClass.Knight;
+        [SerializeField] private Sprite _portrait;
         [SerializeField] private StatBlock _baseStats;
         [SerializeField] private UpgradeCurve _upgradeCurve;
         [SerializeField] private SkillDefinition _defaultSkill;
@@ -17,6 +18,8 @@ namespace Data
         public string DisplayName => _displayName;
 
         public CharacterClass CharacterClass => _characterClass;
+
+        public Sprite Portrait => _portrait;
 
         public StatBlock BaseStats => _baseStats;
 

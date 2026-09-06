@@ -71,6 +71,16 @@ namespace Presentation
             SetQueuedVisual(false);
         }
 
+        /// <summary>
+        /// Marks this button as locked / unavailable.
+        /// </summary>
+        public void SetLocked(string label = "Locked")
+        {
+            Unbind();
+            if (_label != null)
+                _label.text = label;
+        }
+
         private void OnClicked()
         {
             if (_simulator == null || _skill == null || _simulator.IsFinished)
