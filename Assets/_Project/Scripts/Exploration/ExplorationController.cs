@@ -56,7 +56,7 @@ namespace Exploration
             }
 
             if (_resultOverlay != null)
-                _resultOverlay.ContinueRequested += HandleContinueAdvance;
+                _resultOverlay.ContinueRequested += HandleResultConfirmed;
 
             if (_encounterTrigger != null)
                 _encounterTrigger.EncounterReady += HandleEncounterReady;
@@ -80,14 +80,21 @@ namespace Exploration
                 _mainHUD.MainMenuClicked -= HandleLeaveToMainMenu;
             }
 
-            if (_resultOverlay != null)
-                _resultOverlay.ContinueRequested -= HandleContinueAdvance;
-
             if (_encounterTrigger != null)
                 _encounterTrigger.EncounterReady -= HandleEncounterReady;
 
             if (_stageProgress != null)
                 _stageProgress.StageChanged -= HandleStageChanged;
+        }
+
+        private void PrepareForSceneLeave()
+        {
+            StopAdvance();
+
+            if (_resultOverlay != null)
+                _resultOverlay.ContinueRequested -= HandleResultConfirmed;
+
+            _combatController?.StopCombat();
         }
 
         private void EnsureStageProgress()
@@ -114,7 +121,7 @@ namespace Exploration
             _encounterTrigger?.ResetEncounter();
             _combatController?.StopCombat();
             ResetScrollVisual();
-            RefreshStageHud();
+            RefreshHud();
             _mainHUD?.ShowAdvanceOnly();
         }
 
@@ -122,7 +129,6 @@ namespace Exploration
         {
             _mainHUD?.HideAllActions();
             _combatController?.SetEncounter(_rolledEnemies);
-            // Encounter already moved enemies to the stop point; skip a second approach.
             _combatController?.StartCombat(playEntrance: false);
         }
 
@@ -140,9 +146,7 @@ namespace Exploration
                 return;
             }
 
-            // Lock party menus for this run as soon as Advance is pressed.
             _mainHUD?.SetPartyMenusAvailable(false);
-
             StopAdvance();
             _advanceRoutine = StartCoroutine(AdvanceRoutine());
         }
@@ -155,7 +159,7 @@ namespace Exploration
             _stateMachine.SetState(GameState.Combat);
         }
 
-        private void HandleContinueAdvance()
+        private void HandleResultConfirmed()
         {
             if (_stateMachine == null)
                 return;
@@ -164,13 +168,15 @@ namespace Exploration
             _stateMachine.SetState(GameState.Exploration);
         }
 
-        private static void HandleLeaveToUpgradeCenter()
+        private void HandleLeaveToUpgradeCenter()
         {
+            PrepareForSceneLeave();
             SceneManager.LoadScene(SceneNames.UpgradeCenter);
         }
 
-        private static void HandleLeaveToMainMenu()
+        private void HandleLeaveToMainMenu()
         {
+            PrepareForSceneLeave();
             SceneManager.LoadScene(SceneNames.MainMenu);
         }
 
@@ -247,10 +253,16 @@ namespace Exploration
             return _rolledEnemies.Count > 0;
         }
 
-        private void RefreshStageHud()
+        private void RefreshHud()
         {
             if (_stageProgress != null)
                 _mainHUD?.SetStage(_stageProgress.CurrentStage);
+
+            if (ServiceLocator.TryGet(out PlayerProfileService profileService) &&
+                profileService.Profile != null)
+            {
+                _mainHUD?.SetGold(profileService.Profile.Gold);
+            }
         }
 
         private void StopAdvance()

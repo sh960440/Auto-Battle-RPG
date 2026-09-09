@@ -33,7 +33,18 @@ namespace Presentation
             LockSecondarySkill();
             _skillButton?.Bind(simulator, playerSkill);
             _damageFloatPresenter?.Bind(simulator);
-            _resultOverlay?.Bind(simulator);
+
+            if (_resultOverlay != null)
+                _resultOverlay.Bind(simulator);
+        }
+
+        /// <summary>
+        /// Shows the result window with gold and loot text.
+        /// </summary>
+        public void ShowResult(CombatResult result, LootDrop drop)
+        {
+            if (_resultOverlay != null)
+                _resultOverlay.Show(result, drop);
         }
 
         /// <summary>
@@ -44,7 +55,10 @@ namespace Presentation
             _skillButton?.Unbind();
             _skill2Button?.Unbind();
             _damageFloatPresenter?.Unbind();
-            _resultOverlay?.Unbind();
+
+            if (_resultOverlay != null)
+                _resultOverlay.Unbind();
+
             LockSecondarySkill();
         }
 

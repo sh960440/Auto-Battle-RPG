@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Data.CharacterDefinition
   _displayName: Knight
   _characterClass: 0
+  _portrait: {fileID: 21300000, guid: 55227a02c568a8c40a281e1cf3b83200, type: 3}
   _baseStats:
     HP: 120
     Attack: 10

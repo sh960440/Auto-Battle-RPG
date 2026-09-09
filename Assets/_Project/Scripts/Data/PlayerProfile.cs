@@ -95,6 +95,19 @@ namespace Data
         }
 
         /// <summary>
+        /// Adds victory gold and an optional inventory item.
+        /// </summary>
+        public void ApplyLoot(LootDrop drop)
+        {
+            if (drop == null)
+                return;
+
+            AddGold(drop.Gold);
+            if (drop.HasItem)
+                AddToInventory(drop.Item);
+        }
+
+        /// <summary>
         /// Spends gold when the balance is enough.
         /// </summary>
         /// <returns><c>true</c> when the spend succeeded.</returns>

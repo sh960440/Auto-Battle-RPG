@@ -15,6 +15,7 @@ namespace Presentation
         [SerializeField] private Button _mainMenuButton;
         [SerializeField] private TMP_Text _stageLabel;
         [SerializeField] private GameObject _coinPanel;
+        [SerializeField] private TMP_Text _coinAmountText;
         [SerializeField] private string _stageFormat = "{0}";
 
         /// <summary>
@@ -97,6 +98,15 @@ namespace Presentation
         {
             if (_stageLabel != null)
                 _stageLabel.text = string.Format(_stageFormat, Mathf.Max(1, stage));
+        }
+
+        /// <summary>
+        /// Updates the displayed gold amount.
+        /// </summary>
+        public void SetGold(int gold)
+        {
+            if (_coinAmountText != null)
+                _coinAmountText.text = Mathf.Max(0, gold).ToString();
         }
 
         private void HandleAdvanceClicked() => AdvanceClicked?.Invoke();

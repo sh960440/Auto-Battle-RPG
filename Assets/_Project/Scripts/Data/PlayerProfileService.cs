@@ -75,6 +75,19 @@ namespace Data
         }
 
         /// <summary>
+        /// Adds victory loot to the profile and notifies inventory listeners.
+        /// </summary>
+        public void ApplyLoot(LootDrop drop)
+        {
+            if (drop == null)
+                return;
+
+            Profile.ApplyLoot(drop);
+            if (drop.HasItem)
+                NotifyLoadoutChanged();
+        }
+
+        /// <summary>
         /// Snapshots the selected character, final stats, and skill for this Advance run.
         /// </summary>
         /// <returns><c>false</c> when there is no selected character to lock.</returns>

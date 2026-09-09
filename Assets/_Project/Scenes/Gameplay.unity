@@ -480,6 +480,7 @@ MonoBehaviour:
   _combatHud: {fileID: 1292124300}
   _enemyEntrance: {fileID: 1590266498}
   _combatStage: {fileID: 1590266497}
+  _lootTable: {fileID: 11400000, guid: 9b4c13e26a0d48f5c3e1a7d2f6b8c045, type: 2}
   _startOnPlay: 0
   _combatSpeed: 2
 --- !u!4 &113297711
@@ -2046,7 +2047,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -3636821277848081472, guid: 9fac55acd90852d4fa2827a833efab52, type: 3}
+  m_Sprite: {fileID: 7465102938475620193, guid: e1f2a3b4c5d60718930b4c5d6e7f8091, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4918,8 +4919,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 80
-  m_fontSizeBase: 80
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -6281,6 +6282,7 @@ MonoBehaviour:
   _mainMenuButton: {fileID: 1574308931}
   _stageLabel: {fileID: 993285263}
   _coinPanel: {fileID: 2738658990225584128}
+  _coinAmountText: {fileID: 5540362366413127642}
   _stageFormat: '{0}'
 --- !u!222 &901747431657469928
 CanvasRenderer:

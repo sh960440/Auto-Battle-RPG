@@ -1,5 +1,6 @@
 using System;
 using Combat;
+using Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,8 +18,6 @@ namespace Presentation
         [SerializeField] private TMP_Text _lootLabel;
         [SerializeField] private Button _confirmButton;
 
-        private CombatSimulator _simulator;
-
         /// <summary>
         /// Fired when the player confirms the result and returns to exploration.
         /// </summary>
@@ -28,9 +27,6 @@ namespace Presentation
         {
             if (_confirmButton != null)
                 _confirmButton.onClick.AddListener(HandleConfirm);
-
-            if (_simulator != null && _simulator.IsFinished && _simulator.Result.HasValue)
-                Show(_simulator.Result.Value);
         }
 
         private void OnDisable()
@@ -39,50 +35,32 @@ namespace Presentation
                 _confirmButton.onClick.RemoveListener(HandleConfirm);
         }
 
+        private void OnDestroy()
+        {
+            ContinueRequested = null;
+        }
+
         /// <summary>
-        /// Binds the overlay to a running combat.
+        /// Hides the overlay at the start of a combat.
         /// </summary>
         public void Bind(CombatSimulator simulator)
         {
-            UnbindCombatEvents();
-
-            _simulator = simulator ?? throw new ArgumentNullException(nameof(simulator));
-            _simulator.OnCombatEnd += HandleCombatEnd;
+            _ = simulator;
             Hide();
-
-            if (_simulator.IsFinished && _simulator.Result.HasValue)
-                Show(_simulator.Result.Value);
         }
 
         /// <summary>
-        /// Clears combat bindings and hides the overlay.
+        /// Hides the overlay.
         /// </summary>
         public void Unbind()
         {
-            UnbindCombatEvents();
             Hide();
         }
 
-        private void OnDestroy()
-        {
-            UnbindCombatEvents();
-        }
-
-        private void UnbindCombatEvents()
-        {
-            if (_simulator != null)
-            {
-                _simulator.OnCombatEnd -= HandleCombatEnd;
-                _simulator = null;
-            }
-        }
-
-        private void HandleCombatEnd(CombatResult result)
-        {
-            Show(result);
-        }
-
-        private void Show(CombatResult result)
+        /// <summary>
+        /// Shows result and loot.
+        /// </summary>
+        public void Show(CombatResult result, LootDrop drop)
         {
             var window = _root != null ? _root : gameObject;
             window.SetActive(true);
@@ -93,8 +71,14 @@ namespace Presentation
             if (_defeatText != null)
                 _defeatText.SetActive(!victory);
 
-            if (_lootLabel != null)
-                _lootLabel.enabled = true;
+            if (_lootLabel == null)
+                return;
+
+            _lootLabel.enabled = true;
+            _lootLabel.gameObject.SetActive(true);
+            _lootLabel.text = victory && drop != null
+                ? drop.FormatSummary()
+                : "No rewards";
         }
 
         private void Hide()
@@ -107,7 +91,6 @@ namespace Presentation
         {
             ContinueRequested?.Invoke();
             Hide();
-            UnbindCombatEvents();
         }
     }
 }

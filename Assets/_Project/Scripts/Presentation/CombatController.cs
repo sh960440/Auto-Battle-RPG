@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Combat;
 using Core;
@@ -24,11 +25,15 @@ namespace Presentation
         [SerializeField] private EnemyEntrancePresenter _enemyEntrance;
         [SerializeField] private CombatStage _combatStage;
 
+        [Header("Loot")]
+        [SerializeField] private LootTable _lootTable;
+
         [Header("Debug")]
         [SerializeField] private bool _startOnPlay;
         [SerializeField] [Min(0.1f)] private float _combatSpeed = 1.75f;
 
         private CombatSimulator _simulator;
+        private readonly LootService _lootService = new();
         private readonly List<EnemyDefinition> _pendingEnemies = new();
         private bool _isTicking;
 
@@ -183,9 +188,10 @@ namespace Presentation
             if (_simulator != null)
                 _simulator.OnCombatEnd -= HandleCombatEnd;
 
-            _combatHud?.Unbind();
-            _combatPresenter?.Unbind();
+            if (_combatHud != null)
+                _combatHud.Unbind();
 
+            _combatPresenter?.Unbind();
             _simulator = null;
         }
 
@@ -193,11 +199,39 @@ namespace Presentation
         {
             _isTicking = false;
 
+            var drop = TryGrantVictoryLoot(result);
+
+            if (_combatHud != null)
+                _combatHud.ShowResult(result, drop);
+
             if (ServiceLocator.TryGet(out StageProgressService progress))
                 progress.ApplyCombatResult(result);
 
             if (ServiceLocator.TryGet(out GameStateMachine stateMachine))
                 stateMachine.SetState(GameState.Result);
+        }
+
+        private LootDrop TryGrantVictoryLoot(CombatResult result)
+        {
+            if (result != CombatResult.Victory)
+                return null;
+
+            if (_lootTable == null)
+            {
+                Debug.LogWarning("CombatController: No loot table assigned.", this);
+                return null;
+            }
+
+            var stage = 1;
+            if (ServiceLocator.TryGet(out StageProgressService progress))
+                stage = progress.CurrentStage;
+
+            ServiceLocator.TryGet(out PlayerProfileService profileService);
+            CharacterClass? preferredClass = profileService?.DeployedCharacter?.CharacterClass;
+
+            var drop = _lootService.Roll(_lootTable, stage, preferredClass);
+            profileService?.ApplyLoot(drop);
+            return drop;
         }
 
         private List<EnemyDefinition> ResolveEnemies()
