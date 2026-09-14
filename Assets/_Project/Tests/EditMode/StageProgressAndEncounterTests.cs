@@ -49,5 +49,20 @@ namespace Combat.Tests
             Assert.AreSame(late, table.GetBandForStage(90));
             Assert.AreSame(late, table.GetBandForStage(9999));
         }
+
+        [Test]
+        public void GetBandForStage_KeepsAuthoredPressureType()
+        {
+            var early = StageEncounterBand.Create(1, 30, pressureType: EncounterPressureType.Balanced);
+            var wall = StageEncounterBand.Create(31, 70, pressureType: EncounterPressureType.HighDefense);
+            var swarm = StageEncounterBand.Create(71, 100, pressureType: EncounterPressureType.HighSpeedSwarm);
+            var mixed = StageEncounterBand.Create(101, 999, isOpenEnded: true, pressureType: EncounterPressureType.Mixed);
+            var table = StageEncounterTable.CreateRuntime(early, wall, swarm, mixed);
+
+            Assert.AreEqual(EncounterPressureType.Balanced, table.GetBandForStage(1).PressureType);
+            Assert.AreEqual(EncounterPressureType.HighDefense, table.GetBandForStage(50).PressureType);
+            Assert.AreEqual(EncounterPressureType.HighSpeedSwarm, table.GetBandForStage(80).PressureType);
+            Assert.AreEqual(EncounterPressureType.Mixed, table.GetBandForStage(200).PressureType);
+        }
     }
 }

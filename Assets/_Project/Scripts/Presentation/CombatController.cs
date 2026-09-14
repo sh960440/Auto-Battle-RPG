@@ -105,11 +105,13 @@ namespace Presentation
                 isPlayerSide: true,
                 rules);
 
+            var stage = ResolveCurrentStage();
             var enemies = new List<CombatUnit>(enemyDefs.Count);
             for (var i = 0; i < enemyDefs.Count; i++)
             {
                 var def = enemyDefs[i];
-                enemies.Add(new CombatUnit(def.DisplayName, def.Stats, isPlayerSide: false, rules));
+                var scaledStats = EnemyStageScaling.Scale(def.Stats, stage);
+                enemies.Add(new CombatUnit(def.DisplayName, scaledStats, isPlayerSide: false, rules));
             }
 
             var context = new CombatContext(player, enemies);
@@ -222,9 +224,7 @@ namespace Presentation
                 return null;
             }
 
-            var stage = 1;
-            if (ServiceLocator.TryGet(out StageProgressService progress))
-                stage = progress.CurrentStage;
+            var stage = ResolveCurrentStage();
 
             ServiceLocator.TryGet(out PlayerProfileService profileService);
             CharacterClass? preferredClass = profileService?.DeployedCharacter?.CharacterClass;
@@ -232,6 +232,14 @@ namespace Presentation
             var drop = _lootService.Roll(_lootTable, stage, preferredClass);
             profileService?.ApplyLoot(drop);
             return drop;
+        }
+
+        private static int ResolveCurrentStage()
+        {
+            if (ServiceLocator.TryGet(out StageProgressService progress))
+                return progress.CurrentStage;
+
+            return 1;
         }
 
         private List<EnemyDefinition> ResolveEnemies()

@@ -27,6 +27,7 @@ namespace Data
         [SerializeField] private int _minStage = 1;
         [SerializeField] private int _maxStage = 30;
         [SerializeField] private bool _isOpenEnded;
+        [SerializeField] private EncounterPressureType _pressureType = EncounterPressureType.Balanced;
         [SerializeField] private EnemyComposition[] _compositions;
 
         public int MinStage => _minStage;
@@ -41,18 +42,25 @@ namespace Data
         /// </summary>
         public bool IsOpenEnded => _isOpenEnded;
 
+        public EncounterPressureType PressureType => _pressureType;
+
         public IReadOnlyList<EnemyComposition> Compositions => _compositions;
 
         /// <summary>
         /// Creates a band for runtime or tests.
         /// </summary>
-        public static StageEncounterBand Create(int minStage, int maxStage, bool isOpenEnded = false)
+        public static StageEncounterBand Create(
+            int minStage,
+            int maxStage,
+            bool isOpenEnded = false,
+            EncounterPressureType pressureType = EncounterPressureType.Balanced)
         {
             return new StageEncounterBand
             {
                 _minStage = Math.Max(1, minStage),
                 _maxStage = Math.Max(minStage, maxStage),
                 _isOpenEnded = isOpenEnded,
+                _pressureType = pressureType,
                 _compositions = Array.Empty<EnemyComposition>()
             };
         }

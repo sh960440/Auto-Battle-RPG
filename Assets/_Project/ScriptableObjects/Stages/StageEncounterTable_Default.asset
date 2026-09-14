@@ -16,6 +16,7 @@ MonoBehaviour:
   - _minStage: 1
     _maxStage: 30
     _isOpenEnded: 0
+    _pressureType: 0
     _compositions:
     - _label: Goblin
       _enemies:
@@ -30,15 +31,56 @@ MonoBehaviour:
       - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
       - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
   - _minStage: 31
+    _maxStage: 70
+    _isOpenEnded: 0
+    _pressureType: 1
+    _compositions:
+    - _label: Brute
+      _enemies:
+      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
+    - _label: Brute + Orc
+      _enemies:
+      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+    - _label: Dual Brute
+      _enemies:
+      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
+      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
+  - _minStage: 71
+    _maxStage: 100
+    _isOpenEnded: 0
+    _pressureType: 2
+    _compositions:
+    - _label: Dual Imp
+      _enemies:
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+    - _label: Triple Imp
+      _enemies:
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+    - _label: Imps + Goblin
+      _enemies:
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
+  - _minStage: 101
     _maxStage: 999
     _isOpenEnded: 1
+    _pressureType: 3
     _compositions:
-    - _label: Late Goblin + Orc
+    - _label: Brute + Imp
+      _enemies:
+      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+    - _label: Brute + Dual Imp
+      _enemies:
+      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+    - _label: Orc + Brute + Imp
       _enemies:
       - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
-      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
-    - _label: Triple Late
-      _enemies:
-      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
-      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
-      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
+      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
