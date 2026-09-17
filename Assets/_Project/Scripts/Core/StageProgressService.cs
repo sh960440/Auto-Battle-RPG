@@ -9,20 +9,17 @@ namespace Core
     /// </summary>
     public class StageProgressService
     {
-        private const string PlayerPrefsKey = "StageProgress.CurrentStage";
-
         private int _currentStage = 1;
         private int _stageBeforeLastChange = 1;
         private CombatResult? _lastCombatResult;
 
         /// <summary>
-        /// Creates a progress service and loads any saved stage.
+        /// Creates a progress service at the given stage.
         /// </summary>
-        /// <param name="startingStage">Fallback stage when no save exists.</param>
+        /// <param name="startingStage">Initial stage value.</param>
         public StageProgressService(int startingStage = 1)
         {
             _currentStage = Mathf.Max(1, startingStage);
-            Load();
             _stageBeforeLastChange = _currentStage;
         }
 
@@ -53,7 +50,6 @@ namespace Core
         {
             _currentStage = Mathf.Max(1, stage);
             _stageBeforeLastChange = _currentStage;
-            Save();
             StageChanged?.Invoke(_currentStage);
         }
 
@@ -65,8 +61,6 @@ namespace Core
             _stageBeforeLastChange = _currentStage;
             _lastCombatResult = result;
             _currentStage = StageProgressRules.GetNextStage(_currentStage, result);
-
-            Save();
             StageChanged?.Invoke(_currentStage);
         }
 
@@ -76,20 +70,6 @@ namespace Core
         public void ClearLastCombatResult()
         {
             _lastCombatResult = null;
-        }
-
-        private void Load()
-        {
-            if (!PlayerPrefs.HasKey(PlayerPrefsKey))
-                return;
-
-            _currentStage = Mathf.Max(1, PlayerPrefs.GetInt(PlayerPrefsKey, _currentStage));
-        }
-
-        private void Save()
-        {
-            PlayerPrefs.SetInt(PlayerPrefsKey, _currentStage);
-            PlayerPrefs.Save();
         }
     }
 }

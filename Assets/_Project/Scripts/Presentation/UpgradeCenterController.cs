@@ -423,12 +423,24 @@ namespace Presentation
                 return;
 
             _profileService.NotifyLoadoutChanged();
+            if (ServiceLocator.TryGet(out SaveSystem saveSystem))
+                saveSystem.SaveCurrent();
             Refresh();
         }
 
-        private static void LoadGameplay() => SceneManager.LoadScene(SceneNames.Gameplay);
+        private static void LoadGameplay()
+        {
+            if (ServiceLocator.TryGet(out SaveSystem saveSystem))
+                saveSystem.SaveCurrent();
+            SceneManager.LoadScene(SceneNames.Gameplay);
+        }
 
-        private static void LoadMainMenu() => SceneManager.LoadScene(SceneNames.MainMenu);
+        private static void LoadMainMenu()
+        {
+            if (ServiceLocator.TryGet(out SaveSystem saveSystem))
+                saveSystem.SaveCurrent();
+            SceneManager.LoadScene(SceneNames.MainMenu);
+        }
 
         private static void BindButton(Button button, UnityEngine.Events.UnityAction action, bool bind)
         {

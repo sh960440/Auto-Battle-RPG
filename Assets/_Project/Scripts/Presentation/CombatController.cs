@@ -209,6 +209,9 @@ namespace Presentation
             if (ServiceLocator.TryGet(out StageProgressService progress))
                 progress.ApplyCombatResult(result);
 
+            if (ServiceLocator.TryGet(out SaveSystem saveSystem))
+                saveSystem.SaveCurrent();
+
             if (ServiceLocator.TryGet(out GameStateMachine stateMachine))
                 stateMachine.SetState(GameState.Result);
         }

@@ -95,6 +95,9 @@ namespace Exploration
                 _resultOverlay.ContinueRequested -= HandleResultConfirmed;
 
             _combatController?.StopCombat();
+
+            if (ServiceLocator.TryGet(out SaveSystem saveSystem))
+                saveSystem.SaveCurrent();
         }
 
         private void EnsureStageProgress()

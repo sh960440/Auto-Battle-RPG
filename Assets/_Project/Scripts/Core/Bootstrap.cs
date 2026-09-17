@@ -1,3 +1,4 @@
+using Data;
 using Infrastructure;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,6 +12,7 @@ namespace Core
     {
         [SerializeField] private string _firstScene = SceneNames.MainMenu;
         [SerializeField] [Min(1)] private int _debugStartingStage = 1;
+        [SerializeField] private ContentCatalog _contentCatalog;
 
         private void Awake()
         {
@@ -25,6 +27,15 @@ namespace Core
         private void RegisterServices()
         {
             ServiceLocator.Register(new StageProgressService(_debugStartingStage));
+
+            if (_contentCatalog == null)
+            {
+                Debug.LogError("[Bootstrap] ContentCatalog is not assigned. Saves cannot resolve definitions.");
+                return;
+            }
+
+            ServiceLocator.Register(_contentCatalog);
+            ServiceLocator.Register(new SaveSystem(_contentCatalog));
         }
     }
 }

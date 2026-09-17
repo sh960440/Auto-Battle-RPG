@@ -164,6 +164,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Core.Bootstrap
   _firstScene: MainMenu
+  _debugStartingStage: 1
+  _contentCatalog: {fileID: 11400000, guid: 88bdc025cc5b43bb898480ace2d3f094, type: 2}
 --- !u!1 &1154374901
 GameObject:
   m_ObjectHideFlags: 0

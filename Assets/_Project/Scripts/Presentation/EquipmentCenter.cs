@@ -203,6 +203,8 @@ namespace Presentation
 
             _inventorySeeded = true;
             _profileService.NotifyLoadoutChanged();
+            if (ServiceLocator.TryGet(out SaveSystem saveSystem))
+                saveSystem.SaveCurrent();
         }
 
         private void SeedFallbackInventory(PlayerProfile profile)
@@ -370,6 +372,8 @@ namespace Presentation
 
             HideTooltip();
             _profileService.NotifyLoadoutChanged();
+            if (ServiceLocator.TryGet(out SaveSystem saveSystem))
+                saveSystem.SaveCurrent();
             Refresh();
         }
 
