@@ -19,10 +19,6 @@ namespace Presentation
         private const float PaddingTop = 24f;
         private const float PaddingBottom = 24f;
 
-        [Header("Starter Inventory (optional)")]
-        [SerializeField] private EquipmentDefinition[] _starterEquipment;
-        [SerializeField] private int _starterItemStage = 5;
-
         [Header("Inventory UI")]
         [SerializeField] private Transform _listContent;
         [SerializeField] private GameObject _itemSlotTemplate;
@@ -37,10 +33,8 @@ namespace Presentation
 
         private PlayerProfileService _profileService;
         private EquipmentService _equipmentService;
-        private bool _inventorySeeded;
         private bool _entryAvailable = true;
         private RectTransform _tooltipRect;
-        private Canvas _tooltipCanvas;
 
         /// <summary>
         /// Whether the equipment panel is visible.
@@ -88,14 +82,23 @@ namespace Presentation
             if (_itemTooltip == null || !_itemTooltip.activeSelf || _tooltipRect == null)
                 return;
 
-            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    _tooltipCanvas.transform as RectTransform,
-                    Input.mousePosition,
-                    _tooltipCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _tooltipCanvas.worldCamera,
-                    out var localPoint))
-                return;
+            var mouse = Input.mousePosition;
+            var size = _tooltipRect.rect.size;
+            var scale = _tooltipRect.lossyScale;
+            var width = size.x * scale.x;
+            var height = size.y * scale.y;
 
-            _tooltipRect.anchoredPosition = localPoint + new Vector2(18f, 18f);
+            var offsetX = 12f;
+            var offsetY = 12f;
+            if (mouse.x + offsetX + width > Screen.width)
+                offsetX = -12f - width;
+            if (mouse.y + offsetY + height > Screen.height)
+                offsetY = -12f - height;
+
+            var pos = new Vector3(mouse.x + offsetX, mouse.y + offsetY, 0f);
+            pos.x = Mathf.Clamp(pos.x, 0f, Mathf.Max(0f, Screen.width - width));
+            pos.y = Mathf.Clamp(pos.y, 0f, Mathf.Max(0f, Screen.height - height));
+            _tooltipRect.position = pos;
         }
 
         /// <summary>
@@ -107,7 +110,6 @@ namespace Presentation
                 return;
 
             EnsureServices();
-            SeedInventoryIfNeeded();
 
             if (_panelRoot != null)
                 _panelRoot.SetActive(true);
@@ -148,7 +150,6 @@ namespace Presentation
         public void Refresh()
         {
             EnsureServices();
-            SeedInventoryIfNeeded();
             RebuildList(_profileService?.Profile, _profileService?.Profile?.SelectedCharacter);
         }
 
@@ -167,67 +168,8 @@ namespace Presentation
             }
 
             var sheet = GetComponent<CharacterSheet>();
-            if (sheet != null)
-                sheet.EnsureProfileServiceForDependents();
-
+            sheet?.ResolveProfileService();
             ServiceLocator.TryGet(out _profileService);
-        }
-
-        private void SeedInventoryIfNeeded()
-        {
-            if (_inventorySeeded || _profileService?.Profile == null)
-                return;
-
-            var profile = _profileService.Profile;
-            if (profile.Inventory.Count > 0)
-            {
-                _inventorySeeded = true;
-                return;
-            }
-
-            if (_starterEquipment != null && _starterEquipment.Length > 0)
-            {
-                for (var i = 0; i < _starterEquipment.Length; i++)
-                {
-                    if (_starterEquipment[i] == null)
-                        continue;
-
-                    profile.AddToInventory(
-                        EquipmentInstance.CreateForStage(_starterEquipment[i], _starterItemStage));
-                }
-            }
-            else
-            {
-                SeedFallbackInventory(profile);
-            }
-
-            _inventorySeeded = true;
-            _profileService.NotifyLoadoutChanged();
-            if (ServiceLocator.TryGet(out SaveSystem saveSystem))
-                saveSystem.SaveCurrent();
-        }
-
-        private void SeedFallbackInventory(PlayerProfile profile)
-        {
-            var stage = Mathf.Max(1, _starterItemStage);
-            var defs = new[]
-            {
-                EquipmentDefinition.CreateRuntime("Knight Sidearm", EquipmentSlot.LeftHand, CharacterClass.Knight, 2, quality: EquipmentQuality.Common),
-                EquipmentDefinition.CreateRuntime("Knight Longsword", EquipmentSlot.RightHand, CharacterClass.Knight, 5, quality: EquipmentQuality.Uncommon),
-                EquipmentDefinition.CreateRuntime("Padded Coat", EquipmentSlot.UpperBody, CharacterClass.Knight, 3, quality: EquipmentQuality.Uncommon),
-                EquipmentDefinition.CreateRuntime("Leather Pants", EquipmentSlot.LowerBody, CharacterClass.Knight, 10, quality: EquipmentQuality.Common),
-                EquipmentDefinition.CreateRuntime("Parrying Dagger", EquipmentSlot.LeftHand, CharacterClass.Swordsman, 2, quality: EquipmentQuality.Common),
-                EquipmentDefinition.CreateRuntime("Iron Sword", EquipmentSlot.RightHand, CharacterClass.Swordsman, 5, quality: EquipmentQuality.Uncommon),
-                EquipmentDefinition.CreateRuntime("Silk Mantle", EquipmentSlot.UpperBody, CharacterClass.Swordsman, 5, quality: EquipmentQuality.Rare),
-                EquipmentDefinition.CreateRuntime("Runed Pants", EquipmentSlot.LowerBody, CharacterClass.Swordsman, 16, quality: EquipmentQuality.Rare),
-                EquipmentDefinition.CreateRuntime("Wooden Shield", EquipmentSlot.LeftHand, CharacterClass.ShieldGuard, 2, quality: EquipmentQuality.Common),
-                EquipmentDefinition.CreateRuntime("Tower Mace", EquipmentSlot.RightHand, CharacterClass.ShieldGuard, 5, quality: EquipmentQuality.Uncommon),
-                EquipmentDefinition.CreateRuntime("Chain Mail", EquipmentSlot.UpperBody, CharacterClass.ShieldGuard, 4, quality: EquipmentQuality.Uncommon),
-                EquipmentDefinition.CreateRuntime("Tower Greaves", EquipmentSlot.LowerBody, CharacterClass.ShieldGuard, 14, quality: EquipmentQuality.Uncommon)
-            };
-
-            for (var i = 0; i < defs.Length; i++)
-                profile.AddToInventory(EquipmentInstance.CreateForStage(defs[i], stage));
         }
 
         private void BindButtons(bool bind)
@@ -347,8 +289,6 @@ namespace Presentation
             _tooltipText.text = BuildTooltip(item, character);
             if (_tooltipRect == null)
                 _tooltipRect = _itemTooltip.GetComponent<RectTransform>();
-            if (_tooltipCanvas == null)
-                _tooltipCanvas = _itemTooltip.GetComponentInParent<Canvas>();
 
             _itemTooltip.SetActive(true);
         }

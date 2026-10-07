@@ -515,7 +515,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &133226013
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1213,7 +1213,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &551456409
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1673,7 +1673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &674224278
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3075,7 +3075,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1171196673
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5481,7 +5481,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1951628720
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6116,6 +6116,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.GameplayUIScreenController
   _mainHUDRoot: {fileID: 2200000001}
   _combatHUDRoot: {fileID: 1292124298}
+  _combatOnlyRoots:
+  - {fileID: 551456408}
 --- !u!114 &2100000005
 MonoBehaviour:
   m_ObjectHideFlags: 0

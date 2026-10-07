@@ -83,6 +83,16 @@ namespace Presentation
         }
 
         /// <summary>
+        /// Shows or hides the Advance button.
+        /// </summary>
+        public void SetAdvanceVisible(bool visible)
+        {
+            SetButtonActive(_advanceButton, visible);
+            if (visible)
+                SetAdvanceInteractable(true);
+        }
+
+        /// <summary>
         /// Enables or disables the Advance button.
         /// </summary>
         public void SetAdvanceInteractable(bool interactable)

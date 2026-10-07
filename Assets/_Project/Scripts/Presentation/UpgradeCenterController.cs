@@ -128,7 +128,7 @@ namespace Presentation
         {
             _characterSheet = GetComponent<CharacterSheet>();
             _equipmentCenter = GetComponent<EquipmentCenter>();
-            _characterSheet?.EnsureProfileServiceForDependents();
+            _characterSheet?.ResolveProfileService();
             ServiceLocator.TryGet(out _profileService);
         }
 

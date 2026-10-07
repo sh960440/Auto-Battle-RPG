@@ -69,7 +69,9 @@ namespace Presentation
             ServiceLocator.TryGet(out SaveSystem saveSystem);
             saveSystem?.Delete();
 
-            ReplaceProfile(PlayerProfile.CreateStarter(_startingGold, catalog.Characters));
+            var profile = PlayerProfile.CreateStarter(_startingGold, catalog.Characters);
+            catalog.SeedStarterInventory(profile);
+            ReplaceProfile(profile);
 
             if (ServiceLocator.TryGet(out StageProgressService progress))
                 progress.SetStage(1);

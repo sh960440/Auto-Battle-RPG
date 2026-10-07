@@ -1,5 +1,4 @@
 using System.Text;
-using Core;
 using Data;
 using Infrastructure;
 using TMPro;
@@ -13,10 +12,6 @@ namespace Presentation
     /// </summary>
     public class CharacterSheet : MonoBehaviour
     {
-        [Header("Starter Roster (used when no PlayerProfileService exists)")]
-        [SerializeField] private CharacterDefinition[] _starterCharacters;
-        [SerializeField] private int _startingGold = 100;
-
         [Header("Optional UI Hooks")]
         [SerializeField] private GameObject _panelRoot;
         [SerializeField] private Button _openButton;
@@ -39,14 +34,14 @@ namespace Presentation
 
         private void Awake()
         {
-            EnsureProfileService();
+            ResolveProfileService();
             EnsureUi();
             Hide();
         }
 
         private void OnEnable()
         {
-            EnsureProfileService();
+            ResolveProfileService();
             EnsureUi();
             BindButtons(true);
 
@@ -80,7 +75,7 @@ namespace Presentation
             if (!_entryAvailable)
                 return;
 
-            EnsureProfileService();
+            ResolveProfileService();
             EnsureUi();
 
             var equipmentCenter = GetComponent<EquipmentCenter>();
@@ -137,7 +132,7 @@ namespace Presentation
         /// </summary>
         public void Refresh()
         {
-            EnsureProfileService();
+            ResolveProfileService();
             EnsureUi();
 
             var character = _profileService?.Profile?.SelectedCharacter;
@@ -180,97 +175,21 @@ namespace Presentation
         }
 
         /// <summary>
-        /// Ensures the shared profile service exists.
+        /// Resolves the shared profile service.
         /// </summary>
-        public void EnsureProfileServiceForDependents()
-        {
-            EnsureProfileService();
-        }
-
-        private void EnsureProfileService()
+        public void ResolveProfileService()
         {
             if (_profileService != null)
-            {
-                EnsureRosterPopulated(_profileService.Profile);
                 return;
-            }
 
             if (ServiceLocator.TryGet(out PlayerProfileService existing))
             {
                 _profileService = existing;
-                EnsureRosterPopulated(_profileService.Profile);
                 return;
             }
 
-            var profile = PlayerProfile.CreateStarter(_startingGold, ResolveStarterCharacters());
-            _profileService = new PlayerProfileService(profile);
-            ServiceLocator.Register(_profileService);
-        }
-
-        private void EnsureRosterPopulated(PlayerProfile profile)
-        {
-            if (profile == null || profile.Characters.Count > 0)
-                return;
-
-            var definitions = ResolveStarterCharacters();
-            for (var i = 0; i < definitions.Length; i++)
-            {
-                if (definitions[i] != null)
-                    profile.AddCharacter(new CharacterInstance(definitions[i], level: 1));
-            }
-
-            if (profile.Characters.Count > 0)
-                _profileService.SelectByIndex(0);
-        }
-
-        private CharacterDefinition[] ResolveStarterCharacters()
-        {
-            if (_starterCharacters != null && _starterCharacters.Length > 0)
-            {
-                var assigned = 0;
-                for (var i = 0; i < _starterCharacters.Length; i++)
-                {
-                    if (_starterCharacters[i] != null)
-                        assigned++;
-                }
-
-                if (assigned > 0)
-                    return _starterCharacters;
-            }
-
-            return new[]
-            {
-                CharacterDefinition.CreateRuntime(
-                    "Knight",
-                    CharacterClass.Knight,
-                    new StatBlock { HP = 120, Attack = 10, Defense = 4, Speed = 9 },
-                    UpgradeCurve.CreateRuntime(new StatBlock { HP = 5, Attack = 1, Defense = 1 }),
-                    SkillDefinition.CreateRuntime(
-                        "Heavy Strike",
-                        energyCost: 80,
-                        damageMultiplier: 1.5f,
-                        description: "A focused blow that deals heavy single-target damage.")),
-                CharacterDefinition.CreateRuntime(
-                    "Swordsman",
-                    CharacterClass.Swordsman,
-                    new StatBlock { HP = 90, Attack = 16, Defense = 3, Speed = 12 },
-                    UpgradeCurve.CreateRuntime(new StatBlock { HP = 2, Attack = 3, Defense = 0, Speed = 1 }),
-                    SkillDefinition.CreateRuntime(
-                        "Blade Flurry",
-                        energyCost: 90,
-                        damageMultiplier: 1.8f,
-                        description: "Rapid strikes that prioritize raw Attack damage.")),
-                CharacterDefinition.CreateRuntime(
-                    "Shield Guard",
-                    CharacterClass.ShieldGuard,
-                    new StatBlock { HP = 110, Attack = 8, Defense = 10, Speed = 8 },
-                    UpgradeCurve.CreateRuntime(new StatBlock { HP = 3, Attack = 0, Defense = 3 }),
-                    SkillDefinition.CreateRuntime(
-                        "Shield Bash",
-                        energyCost: 70,
-                        damageMultiplier: 1.2f,
-                        description: "A defensive slam that scales well with high Defense builds."))
-            };
+            Debug.LogError(
+                $"{nameof(CharacterSheet)}: {nameof(PlayerProfileService)} is not registered. Start from Boot.");
         }
 
         private void BindButtons(bool bind)

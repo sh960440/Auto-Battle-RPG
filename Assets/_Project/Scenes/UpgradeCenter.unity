@@ -5689,11 +5689,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9673bd92501e7fb4c9b428516c0b257b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.CharacterSheet
-  _starterCharacters:
-  - {fileID: 11400000, guid: 3087cd36f98b0f74dac67490682c94f0, type: 2}
-  - {fileID: 11400000, guid: 7c1fdb5617cb4a1588d5e2c76c47fc82, type: 2}
-  - {fileID: 11400000, guid: f59bf3e93a224cd5b8e57e9419c42742, type: 2}
-  _startingGold: 200
   _panelRoot: {fileID: 0}
   _openButton: {fileID: 0}
   _closeButton: {fileID: 0}
@@ -5717,8 +5712,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea9a16052fffb194491fb9cdaa5e18f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.EquipmentCenter
-  _starterEquipment: []
-  _starterItemStage: 5
   _listContent: {fileID: 753079066}
   _itemSlotTemplate: {fileID: 926851774}
   _itemTooltip: {fileID: 2100000100}
@@ -9234,7 +9227,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2100000100}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

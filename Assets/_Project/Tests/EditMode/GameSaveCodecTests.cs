@@ -85,5 +85,44 @@ namespace Data.Tests
             Assert.AreEqual(0, profile.Inventory.Count);
             Assert.AreEqual(2, profile.Characters[0].Level);
         }
+
+        [Test]
+        public void SeedStarterInventory_UsesCatalogAssetsThatSurviveRoundTrip()
+        {
+            var knight = CharacterDefinition.CreateRuntime(
+                "Knight",
+                CharacterClass.Knight,
+                new StatBlock { HP = 120, Attack = 10, Defense = 4, Speed = 9 });
+            knight.name = "Character_Knight";
+
+            var sidearm = EquipmentDefinition.CreateRuntime(
+                "Knight Sidearm",
+                EquipmentSlot.LeftHand,
+                CharacterClass.Knight,
+                baseMainStat: 2);
+            sidearm.name = "Equipment_Knight Sidearm";
+
+            var catalog = ContentCatalog.CreateRuntime(
+                new[] { knight },
+                new[] { sidearm },
+                starterEquipment: new[] { sidearm },
+                starterEquipmentStage: 5);
+
+            var profile = PlayerProfile.CreateStarter(100, knight);
+            catalog.SeedStarterInventory(profile);
+
+            var item = profile.Inventory[0];
+            profile.RemoveFromInventory(item);
+            profile.Characters[0].Equip(item);
+
+            var data = GameSaveCodec.ToSaveData(profile, currentStage: 1);
+            var loaded = GameSaveCodec.FromSaveData(data, catalog);
+
+            Assert.AreEqual(0, loaded.Inventory.Count);
+            Assert.IsNotNull(loaded.Characters[0].GetEquipment(EquipmentSlot.LeftHand));
+            Assert.AreEqual(
+                "Equipment_Knight Sidearm",
+                loaded.Characters[0].GetEquipment(EquipmentSlot.LeftHand).Definition.name);
+        }
     }
 }

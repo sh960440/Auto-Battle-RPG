@@ -19,6 +19,11 @@ namespace Presentation
         private readonly Dictionary<CombatUnit, CombatUnitView> _viewsByUnit = new();
         private readonly Dictionary<CombatUnitView, Coroutine> _hpTweens = new();
 
+        private void Awake()
+        {
+            HideAllViews();
+        }
+
         /// <summary>
         /// Binds to a simulator, maps units to views, and starts listening for combat events.
         /// </summary>
@@ -33,7 +38,7 @@ namespace Presentation
         }
 
         /// <summary>
-        /// Stops listening and clears view bindings.
+        /// Stops listening, clears bindings, and hides combat unit views.
         /// </summary>
         public void Unbind()
         {
@@ -45,23 +50,33 @@ namespace Presentation
 
             StopAllHpTweens();
             _viewsByUnit.Clear();
+            HideAllViews();
+        }
 
+        private void OnDestroy()
+        {
+            Unbind();
+        }
+
+        private void HideAllViews()
+        {
             if (_playerView != null)
+            {
                 _playerView.Unbind();
+                _playerView.gameObject.SetActive(false);
+            }
 
             if (_enemyViews == null)
                 return;
 
             for (var i = 0; i < _enemyViews.Length; i++)
             {
-                if (_enemyViews[i] != null)
-                    _enemyViews[i].Unbind();
-            }
-        }
+                if (_enemyViews[i] == null)
+                    continue;
 
-        private void OnDestroy()
-        {
-            Unbind();
+                _enemyViews[i].Unbind();
+                _enemyViews[i].gameObject.SetActive(false);
+            }
         }
 
         private void LateUpdate()

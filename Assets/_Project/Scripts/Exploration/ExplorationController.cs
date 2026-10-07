@@ -105,8 +105,8 @@ namespace Exploration
             if (ServiceLocator.TryGet(out _stageProgress))
                 return;
 
-            _stageProgress = new StageProgressService();
-            ServiceLocator.Register(_stageProgress);
+            Debug.LogWarning(
+                $"{nameof(ExplorationController)}: {nameof(StageProgressService)} is not registered. Start from Boot.");
         }
 
         private void HandleStateEntered(GameState state)
@@ -150,6 +150,7 @@ namespace Exploration
             }
 
             _mainHUD?.SetPartyMenusAvailable(false);
+            _mainHUD?.SetAdvanceVisible(false);
             StopAdvance();
             _advanceRoutine = StartCoroutine(AdvanceRoutine());
         }
@@ -191,7 +192,6 @@ namespace Exploration
         private IEnumerator AdvanceRoutine()
         {
             _isAdvancing = true;
-            _mainHUD?.SetAdvanceInteractable(false);
 
             var duration = Mathf.Max(0.01f, _advanceDuration);
             var elapsed = 0f;
@@ -225,7 +225,7 @@ namespace Exploration
             if (!RollEncounter())
             {
                 Debug.LogError($"{nameof(ExplorationController)}: Failed to roll enemies for stage {_stageProgress?.CurrentStage}.", this);
-                _mainHUD?.SetAdvanceInteractable(true);
+                _mainHUD?.ShowAdvanceOnly();
                 yield break;
             }
 
