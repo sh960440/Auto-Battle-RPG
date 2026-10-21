@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Data;
 using UnityEngine;
 
 namespace Presentation
@@ -39,6 +41,49 @@ namespace Presentation
             var slot = GetEnemySlot(index);
             if (slot != null)
                 slot.gameObject.SetActive(active);
+        }
+
+        /// <summary>
+        /// Activates slots for the encounter and applies each enemy's sprite.
+        /// </summary>
+        public void ApplyEncounter(IReadOnlyList<EnemyDefinition> enemies)
+        {
+            var count = enemies != null ? enemies.Count : 0;
+            var slots = _enemySlots;
+            if (slots == null)
+                return;
+
+            for (var i = 0; i < slots.Length; i++)
+            {
+                var active = i < count && enemies[i] != null;
+                SetEnemySlotActive(i, active);
+                if (!active)
+                    continue;
+
+                var sprite = enemies[i].Sprite != null ? enemies[i].Sprite : _enemySprite;
+                SetEnemySlotSprite(i, sprite);
+            }
+        }
+
+        /// <summary>
+        /// Sets the visual sprite on an enemy slot when present.
+        /// </summary>
+        public void SetEnemySlotSprite(int index, Sprite sprite)
+        {
+            if (sprite == null)
+                return;
+
+            var slot = GetEnemySlot(index);
+            if (slot == null)
+                return;
+
+            var visual = slot.Find("Visual");
+            var renderer = visual != null
+                ? visual.GetComponent<SpriteRenderer>()
+                : slot.GetComponentInChildren<SpriteRenderer>(true);
+
+            if (renderer != null)
+                renderer.sprite = sprite;
         }
 
 #if UNITY_EDITOR

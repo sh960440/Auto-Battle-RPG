@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 309bd8f20ae2555458f1e9a2e97f83fb, type: 3}
-  m_Name: Enemy_Goblin
+  m_Name: Enemy_LanternImp
   m_EditorClassIdentifier: Assembly-CSharp::Data.EnemyDefinition
-  _displayName: Goblin
+  _displayName: Lantern Imp
   _stats:
-    HP: 30
-    Attack: 6
-    Defense: 2
-    Speed: 8
+    HP: 18
+    Attack: 5
+    Defense: 1
+    Speed: 14
     LifeSteal: 0
     Tenacity: 0
     Evasion: 0
     Crit: 0
     Accuracy: 0
     MaxEnergy: 0
+  _sprite: {fileID: 4349194590612477393, guid: e6fedcc3980f6e34ebed027b9311c698, type: 3}
   _prefab: {fileID: 0}

@@ -240,6 +240,15 @@ namespace Presentation
             if (levelLabel != null)
                 levelLabel.text = item.Level.ToString();
 
+            var icon = FindChildImage(slot.transform, "ItemIcon");
+            if (icon != null)
+            {
+                var sprite = item.Definition != null ? item.Definition.Icon : null;
+                icon.sprite = sprite;
+                icon.enabled = true;
+                icon.color = sprite != null ? Color.white : new Color(1f, 1f, 1f, 0.15f);
+            }
+
             var canEquip = character != null &&
                            _equipmentService.CanEquipFromInventory(_profileService.Profile, character, item);
 
@@ -334,6 +343,12 @@ namespace Presentation
         {
             var child = root.Find(childName);
             return child != null ? child.GetComponent<TMP_Text>() : null;
+        }
+
+        private static Image FindChildImage(Transform root, string childName)
+        {
+            var child = root.Find(childName);
+            return child != null ? child.GetComponent<Image>() : null;
         }
 
         private static string BuildTooltip(EquipmentInstance item, CharacterInstance character)

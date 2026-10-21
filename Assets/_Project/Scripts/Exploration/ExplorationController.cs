@@ -229,7 +229,7 @@ namespace Exploration
                 yield break;
             }
 
-            _encounterTrigger?.BeginEncounter(_rolledEnemies.Count);
+            _encounterTrigger?.BeginEncounter(_rolledEnemies);
         }
 
         private bool RollEncounter()

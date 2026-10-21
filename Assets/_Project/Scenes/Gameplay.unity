@@ -482,7 +482,7 @@ MonoBehaviour:
   _combatStage: {fileID: 1590266497}
   _lootTable: {fileID: 11400000, guid: 9b4c13e26a0d48f5c3e1a7d2f6b8c045, type: 2}
   _startOnPlay: 0
-  _combatSpeed: 2
+  _combatSpeed: 8
 --- !u!4 &113297711
 Transform:
   m_ObjectHideFlags: 0
@@ -3183,6 +3183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.CombatSkillButton
   _button: {fileID: 1203934330}
   _label: {fileID: 671869455}
+  _icon: {fileID: 0}
   _queuedIndicator: {fileID: 73922542}
 --- !u!114 &1203934330
 MonoBehaviour:
@@ -4034,6 +4035,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.CombatSkillButton
   _button: {fileID: 1434141825}
   _label: {fileID: 1970428498}
+  _icon: {fileID: 0}
   _queuedIndicator: {fileID: 1458661763}
 --- !u!114 &1434141825
 MonoBehaviour:
@@ -6132,7 +6134,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Exploration.EncounterTrigger
   _combatStage: {fileID: 1590266497}
   _enemyEntrance: {fileID: 1590266498}
-  _enemyCount: 2
 --- !u!114 &2100000006
 MonoBehaviour:
   m_ObjectHideFlags: 0

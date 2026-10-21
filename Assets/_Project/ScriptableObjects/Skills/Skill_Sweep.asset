@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Data.SkillDefinition
   _displayName: Sweep
   _description: Sweeps all enemies for modest AoE damage.
+  _icon: {fileID: 7195036215407931640, guid: 1c24b7d9df9a19a4f828a1367e54d611, type: 3}
   _energyCost: 100
   _damageMultiplier: 1
   _isAoe: 1

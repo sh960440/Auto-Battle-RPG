@@ -10,11 +10,14 @@ namespace Data
     {
         [SerializeField] private string _displayName;
         [SerializeField] private StatBlock _stats;
+        [SerializeField] private Sprite _sprite;
         [SerializeField] private GameObject _prefab;
 
         public string DisplayName => _displayName;
 
         public StatBlock Stats => _stats;
+
+        public Sprite Sprite => _sprite;
 
         public GameObject Prefab => _prefab;
     }

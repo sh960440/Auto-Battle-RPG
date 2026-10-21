@@ -118,7 +118,7 @@ namespace Presentation
             _simulator = new CombatSimulator(context, rules);
             _simulator.OnCombatEnd += HandleCombatEnd;
 
-            ApplyEnemySlots(enemyDefs.Count);
+            ApplyEnemySlots(enemyDefs);
             _combatPresenter?.Bind(_simulator);
             _combatHud?.Bind(_simulator, playerSkill);
 
@@ -278,17 +278,9 @@ namespace Presentation
             return result;
         }
 
-        private void ApplyEnemySlots(int enemyCount)
+        private void ApplyEnemySlots(List<EnemyDefinition> enemies)
         {
-            if (_combatStage == null)
-                return;
-
-            var slots = _combatStage.EnemySlots;
-            if (slots == null)
-                return;
-
-            for (var i = 0; i < slots.Length; i++)
-                _combatStage.SetEnemySlotActive(i, i < enemyCount);
+            _combatStage?.ApplyEncounter(enemies);
         }
 
         private void OnDestroy()

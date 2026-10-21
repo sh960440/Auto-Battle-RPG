@@ -13,6 +13,7 @@ namespace Presentation
     {
         [SerializeField] private Button _button;
         [SerializeField] private TMP_Text _label;
+        [SerializeField] private Image _icon;
         [SerializeField] private Image _queuedIndicator;
 
         private CombatSimulator _simulator;
@@ -20,12 +21,12 @@ namespace Presentation
 
         private void Awake()
         {
-            if (_button == null)
-                _button = GetComponent<Button>();
+            EnsureRefs();
         }
 
         private void OnEnable()
         {
+            EnsureRefs();
             if (_button != null)
                 _button.onClick.AddListener(OnClicked);
         }
@@ -47,14 +48,31 @@ namespace Presentation
         /// </summary>
         public void Bind(CombatSimulator simulator, SkillDefinition skill)
         {
+            EnsureRefs();
+
             _simulator = simulator ?? throw new System.ArgumentNullException(nameof(simulator));
             _skill = skill ?? throw new System.ArgumentNullException(nameof(skill));
 
             if (_label != null)
                 _label.text = $"{_skill.DisplayName} ({_skill.EnergyCost})";
 
+            if (_icon != null && _skill.Icon != null)
+                _icon.sprite = _skill.Icon;
+
             RefreshInteractable();
             RefreshQueuedVisual();
+        }
+
+        private void EnsureRefs()
+        {
+            if (_button == null)
+                _button = GetComponent<Button>();
+
+            if (_icon == null && _button != null)
+                _icon = _button.targetGraphic as Image;
+
+            if (_icon == null)
+                _icon = GetComponent<Image>();
         }
 
         /// <summary>

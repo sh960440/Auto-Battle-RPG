@@ -10,6 +10,7 @@ namespace Data
     {
         [SerializeField] private string _displayName;
         [SerializeField] [TextArea] private string _description;
+        [SerializeField] private Sprite _icon;
         [SerializeField] private int _energyCost = 80;
         [SerializeField] private float _damageMultiplier = 1.5f;
         [SerializeField] private bool _isAoe;
@@ -27,6 +28,8 @@ namespace Data
                 return $"Costs {_energyCost} energy. Deals x{_damageMultiplier:0.##} damage{aoe}";
             }
         }
+
+        public Sprite Icon => _icon;
 
         public int EnergyCost => _energyCost;
         public float DamageMultiplier => _damageMultiplier;

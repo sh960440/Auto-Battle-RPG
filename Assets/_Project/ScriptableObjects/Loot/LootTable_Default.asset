@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Data::Data.LootTable
   _minGold: 8
   _maxGold: 16
-  _equipmentDropChance: 0.7
+  _equipmentDropChance: 0.6
   _sameClassWeightMultiplier: 1.5
   _entries:
   - _equipment: {fileID: 11400000, guid: 167f683bf54440e99415ece9e2aa1fef, type: 2}

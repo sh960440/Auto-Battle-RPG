@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using Data;
 using Presentation;
 using UnityEngine;
 
@@ -12,8 +14,8 @@ namespace Exploration
     {
         [SerializeField] private CombatStage _combatStage;
         [SerializeField] private EnemyEntrancePresenter _enemyEntrance;
-        [SerializeField] [Min(1)] private int _enemyCount = 1;
 
+        private readonly List<EnemyDefinition> _pendingEnemies = new();
         private Coroutine _running;
         private bool _isReady;
 
@@ -39,34 +41,35 @@ namespace Exploration
             }
 
             _isReady = false;
+            _pendingEnemies.Clear();
             HideAllEnemySlots();
         }
 
         /// <summary>
         /// Shows the enemies and plays the approach.
         /// </summary>
-        /// <param name="enemyCount">The number of enemies to show.</param>
-        public void BeginEncounter(int enemyCount)
+        public void BeginEncounter(IReadOnlyList<EnemyDefinition> enemies)
         {
             if (_running != null)
                 StopCoroutine(_running);
 
-            _enemyCount = Mathf.Max(1, enemyCount);
+            _pendingEnemies.Clear();
+            if (enemies != null)
+            {
+                for (var i = 0; i < enemies.Count; i++)
+                {
+                    if (enemies[i] != null)
+                        _pendingEnemies.Add(enemies[i]);
+                }
+            }
+
             _isReady = false;
             _running = StartCoroutine(BeginEncounterRoutine());
         }
 
-        /// <summary>
-        /// Begins an encounter using the enemy count.
-        /// </summary>
-        public void BeginEncounter()
-        {
-            BeginEncounter(_enemyCount);
-        }
-
         private IEnumerator BeginEncounterRoutine()
         {
-            ApplyEnemySlots(_enemyCount);
+            _combatStage?.ApplyEncounter(_pendingEnemies);
 
             var completed = false;
             if (_enemyEntrance != null)
@@ -83,19 +86,6 @@ namespace Exploration
             _isReady = true;
             _running = null;
             EncounterReady?.Invoke();
-        }
-
-        private void ApplyEnemySlots(int enemyCount)
-        {
-            if (_combatStage == null)
-                return;
-
-            var slots = _combatStage.EnemySlots;
-            if (slots == null)
-                return;
-
-            for (var i = 0; i < slots.Length; i++)
-                _combatStage.SetEnemySlotActive(i, i < enemyCount);
         }
 
         private void HideAllEnemySlots()

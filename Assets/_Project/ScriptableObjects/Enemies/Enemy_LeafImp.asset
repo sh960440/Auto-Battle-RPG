@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 309bd8f20ae2555458f1e9a2e97f83fb, type: 3}
-  m_Name: Enemy_Orc
+  m_Name: Enemy_LeafImp
   m_EditorClassIdentifier: Assembly-CSharp::Data.EnemyDefinition
-  _displayName: Orc
+  _displayName: Leaf Imp
   _stats:
-    HP: 50
-    Attack: 10
-    Defense: 4
-    Speed: 12
+    HP: 30
+    Attack: 6
+    Defense: 2
+    Speed: 8
     LifeSteal: 0
     Tenacity: 0
     Evasion: 0
     Crit: 0
     Accuracy: 0
     MaxEnergy: 0
+  _sprite: {fileID: -4618462627772441395, guid: 99ff921c7f54a7c4a860cd297fb0c2f2, type: 3}
   _prefab: {fileID: 0}

@@ -60,6 +60,7 @@ namespace Presentation
 
         [Header("Skills")]
         [SerializeField] private GameObject _skill1Root;
+        [SerializeField] private Image _skill1Icon;
         [SerializeField] private TMP_Text _skill1NameText;
         [SerializeField] private TMP_Text _skill1EnergyText;
         [SerializeField] private TMP_Text _skill1EffectText;
@@ -92,6 +93,7 @@ namespace Presentation
             _mainMenuAction = LoadMainMenu;
             _levelUpAction = HandleLevelUp;
             EnsurePartyComponents();
+            ResolveSkillIcon();
             WireLevelUpHover();
             ShowTab(HubTab.Stat);
             Refresh();
@@ -130,6 +132,23 @@ namespace Presentation
             _equipmentCenter = GetComponent<EquipmentCenter>();
             _characterSheet?.ResolveProfileService();
             ServiceLocator.TryGet(out _profileService);
+        }
+
+        private void ResolveSkillIcon()
+        {
+            if (_skill1Icon != null)
+                return;
+
+            var transforms = GetComponentsInChildren<Transform>(true);
+            for (var i = 0; i < transforms.Length; i++)
+            {
+                if (transforms[i] == null || transforms[i].name != "SkillIcon")
+                    continue;
+
+                _skill1Icon = transforms[i].GetComponent<Image>();
+                if (_skill1Icon != null)
+                    return;
+            }
         }
 
         private void BindChrome(bool bind)
@@ -356,8 +375,18 @@ namespace Presentation
             if (slot == null)
                 return;
 
-            var filled = character != null && character.TryGetEquipment(equipmentSlot, out _);
-            slot.color = filled ? _slotFilledColor : _slotEmptyColor;
+            if (character != null &&
+                character.TryGetEquipment(equipmentSlot, out var item) &&
+                item?.Definition != null)
+            {
+                var icon = item.Definition.Icon;
+                slot.sprite = icon;
+                slot.color = icon != null ? Color.white : _slotFilledColor;
+                return;
+            }
+
+            slot.sprite = null;
+            slot.color = _slotEmptyColor;
         }
 
         private void RefreshSkills()
@@ -375,6 +404,12 @@ namespace Presentation
                 SetText(_skill1EnergyText, string.Empty);
                 SetText(_skill1EffectText, string.Empty);
                 SetText(_skill1DescriptionText, string.Empty);
+                if (_skill1Icon != null)
+                {
+                    _skill1Icon.sprite = null;
+                    _skill1Icon.color = new Color(1f, 1f, 1f, 0.15f);
+                }
+
                 return;
             }
 
@@ -382,6 +417,12 @@ namespace Presentation
             SetText(_skill1EnergyText, skill.EnergyCost.ToString());
             SetText(_skill1EffectText, $"x{skill.DamageMultiplier:0.##} damage");
             SetText(_skill1DescriptionText, skill.Description);
+
+            if (_skill1Icon != null)
+            {
+                _skill1Icon.sprite = skill.Icon;
+                _skill1Icon.color = skill.Icon != null ? Color.white : new Color(1f, 1f, 1f, 0.15f);
+            }
         }
 
         private void SetSkill2Locked()

@@ -16,5 +16,6 @@ MonoBehaviour:
   _slot: 0
   _quality: 1
   _requiredClass: 2
+  _icon: {fileID: 2840502787026858645, guid: f8b7980ed517fdc43b600d8ffa8736fb, type: 3}
   _baseMainStat: 4
   _growthCurve: {fileID: 11400000, guid: 9b23f9807762953428a7c39c4954ba03, type: 2}

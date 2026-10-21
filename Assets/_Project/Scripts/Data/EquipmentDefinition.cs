@@ -12,6 +12,7 @@ namespace Data
         [SerializeField] private EquipmentSlot _slot;
         [SerializeField] private EquipmentQuality _quality;
         [SerializeField] private CharacterClass _requiredClass = CharacterClass.Knight;
+        [SerializeField] private Sprite _icon;
         [SerializeField] private int _baseMainStat = 1;
         [SerializeField] private EquipmentGrowthCurve _growthCurve;
 
@@ -22,6 +23,8 @@ namespace Data
         public EquipmentQuality Quality => _quality;
 
         public CharacterClass RequiredClass => _requiredClass;
+
+        public Sprite Icon => _icon;
 
         public StatType MainStatType => EquipmentMainStatRules.GetMainStatType(_slot);
 

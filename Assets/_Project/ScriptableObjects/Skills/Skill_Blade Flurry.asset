@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Data.SkillDefinition
   _displayName: Blade Flurry
   _description: Rapid strikes that prioritize raw Attack damage.
+  _icon: {fileID: -8943295051873695582, guid: 78eba55963db513468457c8159dac1c9, type: 3}
   _energyCost: 90
   _damageMultiplier: 1.8
   _isAoe: 0
