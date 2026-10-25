@@ -166,6 +166,7 @@ MonoBehaviour:
   _firstScene: MainMenu
   _debugStartingStage: 1
   _contentCatalog: {fileID: 11400000, guid: 88bdc025cc5b43bb898480ace2d3f094, type: 2}
+  _audioBank: {fileID: 11400000, guid: 16155af6f52a48a29c44c596212596a3, type: 2}
 --- !u!1 &1154374901
 GameObject:
   m_ObjectHideFlags: 0

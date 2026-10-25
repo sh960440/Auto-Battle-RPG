@@ -14,6 +14,7 @@ namespace Data
         [SerializeField] private int _energyCost = 80;
         [SerializeField] private float _damageMultiplier = 1.5f;
         [SerializeField] private bool _isAoe;
+        [SerializeField] private AudioClip _sfx;
 
         public string DisplayName => _displayName;
 
@@ -34,6 +35,8 @@ namespace Data
         public int EnergyCost => _energyCost;
         public float DamageMultiplier => _damageMultiplier;
         public bool IsAoe => _isAoe;
+
+        public AudioClip Sfx => _sfx;
 
         /// <summary>
         /// Creates a runtime skill for tests or temporary setups.

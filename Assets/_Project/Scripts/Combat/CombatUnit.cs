@@ -1,5 +1,6 @@
 using System;
 using Data;
+using UnityEngine;
 
 namespace Combat
 {
@@ -13,12 +14,18 @@ namespace Combat
         private readonly bool _isPlayerSide;
         private readonly float _atbThreshold;
         private readonly int _maxEnergy;
+        private readonly AudioClip _attackSfx;
 
         private int _currentHp;
         private float _atbGauge;
         private int _energy;
 
-        public CombatUnit(string displayName, StatBlock stats, bool isPlayerSide, CombatRules rules = null)
+        public CombatUnit(
+            string displayName,
+            StatBlock stats,
+            bool isPlayerSide,
+            CombatRules rules = null,
+            AudioClip attackSfx = null)
         {
             if (string.IsNullOrWhiteSpace(displayName))
                 throw new ArgumentException("Display name is required.", nameof(displayName));
@@ -26,6 +33,7 @@ namespace Combat
             _displayName = displayName;
             _stats = stats;
             _isPlayerSide = isPlayerSide;
+            _attackSfx = attackSfx;
             _atbThreshold = rules != null ? rules.AtbThreshold : CombatRules.FallbackAtbThreshold;
             _maxEnergy = stats.MaxEnergy > 0
                 ? stats.MaxEnergy
@@ -40,6 +48,8 @@ namespace Combat
         public StatBlock Stats => _stats;
 
         public bool IsPlayerSide => _isPlayerSide;
+
+        public AudioClip AttackSfx => _attackSfx;
 
         public float AtbThreshold => _atbThreshold;
 

@@ -2296,6 +2296,7 @@ GameObject:
   - component: {fileID: 910316682}
   - component: {fileID: 910316681}
   - component: {fileID: 910316680}
+  - component: {fileID: 910316683}
   m_Layer: 5
   m_Name: ConfirmButton
   m_TagString: Untagged
@@ -2405,6 +2406,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 910316678}
   m_CullTransparentMesh: 1
+--- !u!114 &910316683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910316678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e44d28d5d4643ba92afa60d5fd40767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Presentation.UIButtonSFX
+  _clickKind: 2
 --- !u!1 &940277181
 GameObject:
   m_ObjectHideFlags: 0
@@ -3797,6 +3811,7 @@ GameObject:
   - component: {fileID: 1376960945}
   - component: {fileID: 1376960944}
   - component: {fileID: 1376960943}
+  - component: {fileID: 1376960946}
   m_Layer: 5
   m_Name: UpgradCenterButton
   m_TagString: Untagged
@@ -3906,6 +3921,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1376960941}
   m_CullTransparentMesh: 1
+--- !u!114 &1376960946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376960941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e44d28d5d4643ba92afa60d5fd40767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Presentation.UIButtonSFX
+  _clickKind: 3
 --- !u!1 &1419943712
 GameObject:
   m_ObjectHideFlags: 0
@@ -4485,6 +4513,7 @@ GameObject:
   - component: {fileID: 1574308933}
   - component: {fileID: 1574308932}
   - component: {fileID: 1574308931}
+  - component: {fileID: 1574308934}
   m_Layer: 5
   m_Name: MainMenuButton
   m_TagString: Untagged
@@ -4594,6 +4623,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1574308929}
   m_CullTransparentMesh: 1
+--- !u!114 &1574308934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1574308929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e44d28d5d4643ba92afa60d5fd40767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Presentation.UIButtonSFX
+  _clickKind: 3
 --- !u!1 &1584928412
 GameObject:
   m_ObjectHideFlags: 0
@@ -5229,6 +5271,7 @@ GameObject:
   - component: {fileID: 1893836601}
   - component: {fileID: 1893836600}
   - component: {fileID: 1893836599}
+  - component: {fileID: 1893836602}
   m_Layer: 5
   m_Name: AdvanceButton
   m_TagString: Untagged
@@ -5338,6 +5381,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1893836597}
   m_CullTransparentMesh: 1
+--- !u!114 &1893836602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1893836597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e44d28d5d4643ba92afa60d5fd40767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Presentation.UIButtonSFX
+  _clickKind: 2
 --- !u!1 &1901477662
 GameObject:
   m_ObjectHideFlags: 0

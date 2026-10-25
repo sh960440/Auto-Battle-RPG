@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using Combat;
+using Core;
 using Data;
+using Infrastructure;
 using UnityEngine;
 
 namespace Presentation
@@ -153,6 +155,9 @@ namespace Presentation
         private void HandleAttack(CombatUnit attacker, CombatUnit target, int damage)
         {
             // Hooks for future features. Attack animation / hit flash can plug in here.
+            if (ServiceLocator.TryGet(out AudioService audio))
+                audio.PlayAttack(attacker.AttackSfx);
+
             Debug.Log($"[Combat] {attacker.DisplayName} attacks {target.DisplayName} for {damage}");
         }
 
@@ -163,6 +168,9 @@ namespace Presentation
             int totalDamage)
         {
             // Hooks for future features. Skill VFX can plug in here.
+            if (ServiceLocator.TryGet(out AudioService audio))
+                audio.PlaySkill(skill.Sfx);
+
             Debug.Log($"[Combat] {attacker.DisplayName} uses {skill.DisplayName} for {totalDamage} total");
         }
 
@@ -186,6 +194,14 @@ namespace Presentation
 
         private void HandleCombatEnd(CombatResult result)
         {
+            if (ServiceLocator.TryGet(out AudioService audio))
+            {
+                if (result == CombatResult.Victory)
+                    audio.PlayVictory();
+                else
+                    audio.PlayDefeat();
+            }
+
             Debug.Log($"[Combat] Ended: {result}");
             // Hooks for future features. Result overlay is wired in the Combat HUD step.
         }

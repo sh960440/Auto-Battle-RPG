@@ -56,4 +56,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fee30368430c4c09808e54c57811f0af, type: 2}
   - {fileID: 11400000, guid: 685acc46826b484c8f40ba1509913dd1, type: 2}
   - {fileID: 11400000, guid: 9a1afad5449d424bbbcf54f6158c6fa3, type: 2}
-  _starterEquipmentStage: 5
+  _starterEquipmentStage: 1

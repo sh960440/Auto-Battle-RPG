@@ -192,6 +192,8 @@ namespace Exploration
         private IEnumerator AdvanceRoutine()
         {
             _isAdvancing = true;
+            if (ServiceLocator.TryGet(out AudioService audio))
+                audio.PlayAdvanceFootsteps();
 
             var duration = Mathf.Max(0.01f, _advanceDuration);
             var elapsed = 0f;
@@ -219,6 +221,7 @@ namespace Exploration
             if (_scrollRoot != null)
                 _scrollRoot.localPosition = _scrollEndLocalPosition;
 
+            StopAdvanceFootsteps();
             _isAdvancing = false;
             _advanceRoutine = null;
 
@@ -276,7 +279,14 @@ namespace Exploration
                 _advanceRoutine = null;
             }
 
+            StopAdvanceFootsteps();
             _isAdvancing = false;
+        }
+
+        private static void StopAdvanceFootsteps()
+        {
+            if (ServiceLocator.TryGet(out AudioService audio))
+                audio.StopAdvanceFootsteps();
         }
 
         private void ResetScrollVisual()

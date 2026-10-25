@@ -13,6 +13,7 @@ namespace Core
         [SerializeField] private string _firstScene = SceneNames.MainMenu;
         [SerializeField] [Min(1)] private int _debugStartingStage = 1;
         [SerializeField] private ContentCatalog _contentCatalog;
+        [SerializeField] private AudioBank _audioBank;
 
         private void Awake()
         {
@@ -36,6 +37,14 @@ namespace Core
 
             ServiceLocator.Register(_contentCatalog);
             ServiceLocator.Register(new SaveSystem(_contentCatalog));
+
+            if (_audioBank == null)
+            {
+                Debug.LogWarning("[Bootstrap] AudioBank is not assigned. UI and combat SFX will be silent.");
+                return;
+            }
+
+            ServiceLocator.Register(new AudioService(_audioBank));
         }
     }
 }

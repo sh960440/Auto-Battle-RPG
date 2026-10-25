@@ -18,3 +18,4 @@ MonoBehaviour:
   _energyCost: 100
   _damageMultiplier: 1
   _isAoe: 1
+  _sfx: {fileID: 8300000, guid: 1e58141d447344b46bce306a6008bdff, type: 3}

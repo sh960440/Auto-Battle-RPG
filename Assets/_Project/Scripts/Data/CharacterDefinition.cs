@@ -14,6 +14,7 @@ namespace Data
         [SerializeField] private StatBlock _baseStats;
         [SerializeField] private UpgradeCurve _upgradeCurve;
         [SerializeField] private SkillDefinition _defaultSkill;
+        [SerializeField] private AudioClip _attackSfx;
 
         public string DisplayName => _displayName;
 
@@ -26,6 +27,8 @@ namespace Data
         public UpgradeCurve UpgradeCurve => _upgradeCurve;
 
         public SkillDefinition DefaultSkill => _defaultSkill;
+
+        public AudioClip AttackSfx => _attackSfx;
 
         /// <summary>
         /// Creates a runtime definition for temporary setups.

@@ -87,7 +87,7 @@ namespace Presentation
         {
             StopCombat();
 
-            if (!TryResolvePlayer(out var playerName, out var playerStats, out var playerSkill))
+            if (!TryResolvePlayer(out var playerName, out var playerStats, out var playerSkill, out var playerAttackSfx))
                 return;
 
             var enemyDefs = ResolveEnemies();
@@ -103,7 +103,8 @@ namespace Presentation
                 playerName,
                 playerStats,
                 isPlayerSide: true,
-                rules);
+                rules,
+                playerAttackSfx);
 
             var stage = ResolveCurrentStage();
             var enemies = new List<CombatUnit>(enemyDefs.Count);
@@ -111,7 +112,7 @@ namespace Presentation
             {
                 var def = enemyDefs[i];
                 var scaledStats = EnemyStageScaling.Scale(def.Stats, stage);
-                enemies.Add(new CombatUnit(def.DisplayName, scaledStats, isPlayerSide: false, rules));
+                enemies.Add(new CombatUnit(def.DisplayName, scaledStats, isPlayerSide: false, rules, def.AttackSfx));
             }
 
             var context = new CombatContext(player, enemies);
@@ -135,11 +136,16 @@ namespace Presentation
         /// <summary>
         /// Resolves the deployed character stats/skill.
         /// </summary>
-        private bool TryResolvePlayer(out string displayName, out StatBlock stats, out SkillDefinition skill)
+        private bool TryResolvePlayer(
+            out string displayName,
+            out StatBlock stats,
+            out SkillDefinition skill,
+            out AudioClip attackSfx)
         {
             displayName = null;
             stats = StatBlock.Zero;
             skill = null;
+            attackSfx = null;
 
             if (ServiceLocator.TryGet(out PlayerProfileService profileService) &&
                 profileService.DeployedCharacter != null)
@@ -148,6 +154,7 @@ namespace Presentation
                 displayName = deployed.DisplayName;
                 stats = profileService.DeployedStats;
                 skill = profileService.DeployedSkill;
+                attackSfx = deployed.Definition.AttackSfx;
 
                 if (skill == null)
                 {
@@ -177,6 +184,7 @@ namespace Presentation
             displayName = _playerCharacter.DisplayName;
             stats = _playerCharacter.BaseStats;
             skill = _playerCharacter.DefaultSkill;
+            attackSfx = _playerCharacter.AttackSfx;
             return true;
         }
 

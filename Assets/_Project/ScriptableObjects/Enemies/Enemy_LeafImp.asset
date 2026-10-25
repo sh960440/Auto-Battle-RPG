@@ -26,3 +26,4 @@ MonoBehaviour:
     MaxEnergy: 0
   _sprite: {fileID: -4618462627772441395, guid: 99ff921c7f54a7c4a860cd297fb0c2f2, type: 3}
   _prefab: {fileID: 0}
+  _attackSfx: {fileID: 8300000, guid: ab7eb2b7618984e41b5d73f40a9664bf, type: 3}

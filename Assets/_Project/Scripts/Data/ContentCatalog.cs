@@ -12,7 +12,7 @@ namespace Data
         [SerializeField] private CharacterDefinition[] _characters = Array.Empty<CharacterDefinition>();
         [SerializeField] private EquipmentDefinition[] _equipment = Array.Empty<EquipmentDefinition>();
         [SerializeField] private EquipmentDefinition[] _starterEquipment = Array.Empty<EquipmentDefinition>();
-        [SerializeField] [Min(1)] private int _starterEquipmentStage = 3;
+        [SerializeField] [Min(1)] private int _starterEquipmentStage = 1;
 
         public CharacterDefinition[] Characters => _characters;
 
@@ -29,7 +29,7 @@ namespace Data
             CharacterDefinition[] characters,
             EquipmentDefinition[] equipment,
             EquipmentDefinition[] starterEquipment = null,
-            int starterEquipmentStage = 3)
+            int starterEquipmentStage = 1)
         {
             var catalog = CreateInstance<ContentCatalog>();
             catalog.name = "ContentCatalog_Runtime";

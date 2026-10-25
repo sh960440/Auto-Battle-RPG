@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d80e84ddb6f040e5bf575e3cde7e80df, type: 3}
+  m_Name: AudioBank_Default
+  m_EditorClassIdentifier: Data::Data.AudioBank
+  _uiClick: {fileID: 8300000, guid: e89b91dd5f1f0d94099998ab6ff121c0, type: 3}
+  _uiConfirm: {fileID: 8300000, guid: 4c8773f204c16cb40a49e145ecf24f5e, type: 3}
+  _uiBack: {fileID: 8300000, guid: e89b91dd5f1f0d94099998ab6ff121c0, type: 3}
+  _uiLevelUp: {fileID: 8300000, guid: e7976d8b60872684194ac5e26928d2c9, type: 3}
+  _uiEquip: {fileID: 8300000, guid: 4c8773f204c16cb40a49e145ecf24f5e, type: 3}
+  _attack: {fileID: 8300000, guid: 524e0b7b5ee94684d8106d0271b850f7, type: 3}
+  _skill: {fileID: 8300000, guid: 14c83d35760e17d46aa9979bed8e2e7e, type: 3}
+  _victory: {fileID: 8300000, guid: 383ef984e39047d42ad6ccd0cdead8d0, type: 3}
+  _defeat: {fileID: 8300000, guid: c41d3f8cea15aac4ebc8e56d638eb41e, type: 3}
+  _advanceFootsteps: {fileID: 8300000, guid: c55ccd1ce95b8534d94859e53b3a424d, type: 3}

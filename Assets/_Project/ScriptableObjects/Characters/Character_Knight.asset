@@ -28,3 +28,4 @@ MonoBehaviour:
     MaxEnergy: 0
   _upgradeCurve: {fileID: 11400000, guid: 50085dd00e85a19489e180042ed2b863, type: 2}
   _defaultSkill: {fileID: 11400000, guid: 2bda9acd731601d4aa30ad6cb7250ce9, type: 2}
+  _attackSfx: {fileID: 8300000, guid: 14c83d35760e17d46aa9979bed8e2e7e, type: 3}
