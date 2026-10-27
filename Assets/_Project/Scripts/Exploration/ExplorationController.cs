@@ -26,6 +26,7 @@ namespace Exploration
         [SerializeField] private Transform _scrollRoot;
         [SerializeField] private Vector3 _scrollStartLocalPosition = new Vector3(0f, 0.4f, 0f);
         [SerializeField] private Vector3 _scrollEndLocalPosition = Vector3.zero;
+        [SerializeField] private VerticalSpriteScroller _grassScroller;
 
         [Header("Main HUD")]
         [SerializeField] private MainHUD _mainHUD;
@@ -192,6 +193,7 @@ namespace Exploration
         private IEnumerator AdvanceRoutine()
         {
             _isAdvancing = true;
+            SetGrassScrolling(true);
             if (ServiceLocator.TryGet(out AudioService audio))
                 audio.PlayAdvanceFootsteps();
 
@@ -222,12 +224,14 @@ namespace Exploration
                 _scrollRoot.localPosition = _scrollEndLocalPosition;
 
             StopAdvanceFootsteps();
+            SetGrassScrolling(false);
             _isAdvancing = false;
             _advanceRoutine = null;
 
             if (!RollEncounter())
             {
                 Debug.LogError($"{nameof(ExplorationController)}: Failed to roll enemies for stage {_stageProgress?.CurrentStage}.", this);
+                SetGrassScrolling(false);
                 _mainHUD?.ShowAdvanceOnly();
                 yield break;
             }
@@ -280,6 +284,7 @@ namespace Exploration
             }
 
             StopAdvanceFootsteps();
+            SetGrassScrolling(false);
             _isAdvancing = false;
         }
 
@@ -293,6 +298,12 @@ namespace Exploration
         {
             if (_scrollRoot != null)
                 _scrollRoot.localPosition = _scrollStartLocalPosition;
+        }
+
+        private void SetGrassScrolling(bool scrolling)
+        {
+            if (_grassScroller != null)
+                _grassScroller.SetScrolling(scrolling);
         }
 
         private bool TryLockDeployment()

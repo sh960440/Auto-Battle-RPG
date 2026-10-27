@@ -15,6 +15,7 @@ namespace Presentation
         [SerializeField] private Button _newGameButton;
         [SerializeField] private Button _continueButton;
         [SerializeField] private Button _settingsButton;
+        [SerializeField] private Button _quitButton;
         [SerializeField] [Min(0)] private int _startingGold = 100;
 
         private void Awake()
@@ -25,6 +26,10 @@ namespace Presentation
                 _continueButton = FindButton("ContinueGameButton");
             if (_settingsButton == null)
                 _settingsButton = FindButton("SettingsButton");
+            if (_quitButton == null)
+                _quitButton = FindButton("QuitButton");
+
+            ApplyQuitVisibility();
         }
 
         private void OnEnable()
@@ -35,6 +40,8 @@ namespace Presentation
                 _continueButton.onClick.AddListener(HandleContinue);
             if (_settingsButton != null)
                 _settingsButton.onClick.AddListener(HandleSettings);
+            if (_quitButton != null)
+                _quitButton.onClick.AddListener(HandleQuit);
 
             RefreshContinueInteractable();
         }
@@ -47,6 +54,8 @@ namespace Presentation
                 _continueButton.onClick.RemoveListener(HandleContinue);
             if (_settingsButton != null)
                 _settingsButton.onClick.RemoveListener(HandleSettings);
+            if (_quitButton != null)
+                _quitButton.onClick.RemoveListener(HandleQuit);
         }
 
         private void RefreshContinueInteractable()
@@ -107,6 +116,23 @@ namespace Presentation
         private static void HandleSettings()
         {
             Debug.Log("[MainMenu] Settings is not wired yet.");
+        }
+
+        private void ApplyQuitVisibility()
+        {
+            if (_quitButton == null)
+                return;
+
+            _quitButton.gameObject.SetActive(Application.platform != RuntimePlatform.WebGLPlayer);
+        }
+
+        private static void HandleQuit()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
 
         private static void ReplaceProfile(PlayerProfile profile)
