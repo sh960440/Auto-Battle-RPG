@@ -12,10 +12,12 @@ namespace Presentation
         [SerializeField] private RectTransform _popupLayer;
         [SerializeField] private CombatUnitView _playerView;
         [SerializeField] private CombatUnitView[] _enemyViews;
+        [SerializeField] private CombatStage _combatStage;
         [SerializeField] private Vector3 _worldOffset = new Vector3(0f, 40f, 0f);
 
         private CombatSimulator _simulator;
         private readonly Dictionary<CombatUnit, CombatUnitView> _viewsByUnit = new();
+        private readonly Dictionary<CombatUnit, Transform> _enemyBodies = new();
 
         /// <summary>
         /// Binds damage popups to a running combat session.
@@ -30,7 +32,7 @@ namespace Presentation
         }
 
         /// <summary>
-        /// Clears combat bindings and disables the button.
+        /// Clears combat bindings.
         /// </summary>
         public void Unbind()
         {
@@ -41,6 +43,7 @@ namespace Presentation
             }
 
             _viewsByUnit.Clear();
+            _enemyBodies.Clear();
         }
 
         private void OnDestroy()
@@ -51,6 +54,7 @@ namespace Presentation
         private void MapViews(CombatContext context)
         {
             _viewsByUnit.Clear();
+            _enemyBodies.Clear();
 
             if (_playerView != null)
                 _viewsByUnit[context.Player] = _playerView;
@@ -65,9 +69,15 @@ namespace Presentation
                 if (_enemyViews == null || enemyIndex >= _enemyViews.Length)
                     break;
 
-                var view = _enemyViews[enemyIndex++];
+                var view = _enemyViews[enemyIndex];
                 if (view != null)
                     _viewsByUnit[unit] = view;
+
+                var slot = _combatStage != null ? _combatStage.GetEnemySlot(enemyIndex) : null;
+                if (slot != null)
+                    _enemyBodies[unit] = slot;
+
+                enemyIndex++;
             }
         }
 
@@ -79,8 +89,33 @@ namespace Presentation
             if (!_viewsByUnit.TryGetValue(target, out var view) || view == null)
                 return;
 
-            var spawnPos = view.transform.position + _worldOffset;
+            var spawnPos = GetSpawnCanvasPosition(target, view);
             DamageFloatPopup.CreateRuntime(_popupLayer, spawnPos, damage);
+        }
+
+        private Vector3 GetSpawnCanvasPosition(CombatUnit target, CombatUnitView view)
+        {
+            if (_enemyBodies.TryGetValue(target, out var body) && body != null)
+                return WorldToCanvasPosition(GetBodyCenter(body));
+
+            return view.transform.position + _worldOffset;
+        }
+
+        private static Vector3 GetBodyCenter(Transform body)
+        {
+            var renderer = body.GetComponentInChildren<SpriteRenderer>();
+            return renderer != null ? renderer.bounds.center : body.position;
+        }
+
+        private static Vector3 WorldToCanvasPosition(Vector3 worldPosition)
+        {
+            var camera = Camera.main;
+            if (camera == null)
+                return worldPosition;
+
+            var screen = camera.WorldToScreenPoint(worldPosition);
+            screen.z = 0f;
+            return screen;
         }
     }
 }

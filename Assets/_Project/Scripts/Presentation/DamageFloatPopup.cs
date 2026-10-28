@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Presentation
 {
@@ -10,8 +11,8 @@ namespace Presentation
     public class DamageFloatPopup : MonoBehaviour
     {
         [SerializeField] private TMP_Text _label;
-        [SerializeField] private float _riseDistance = 60f;
-        [SerializeField] private float _duration = 0.7f;
+        [SerializeField] private float _riseDistance = 70f;
+        [SerializeField] private float _duration = 0.8f;
 
         private RectTransform _rectTransform;
 
@@ -37,25 +38,31 @@ namespace Presentation
         /// <summary>
         /// Creates a damage float popup under <paramref name="parent"/>.
         /// </summary>
-        public static DamageFloatPopup CreateRuntime(RectTransform parent, Vector3 worldPosition, int damage)
+        public static DamageFloatPopup CreateRuntime(RectTransform parent, Vector3 canvasPosition, int damage)
         {
             var go = new GameObject("DamageFloat", typeof(RectTransform));
             var rect = go.GetComponent<RectTransform>();
             rect.SetParent(parent, false);
-            rect.sizeDelta = new Vector2(120f, 40f);
+            rect.sizeDelta = new Vector2(180f, 64f);
 
             var tmp = go.AddComponent<TextMeshProUGUI>();
             tmp.alignment = TextAlignmentOptions.Center;
-            tmp.fontSize = 36f;
-            tmp.fontStyle = FontStyles.Bold;
-            tmp.color = new Color(1f, 0.85f, 0.2f, 1f);
+            tmp.fontSize = 48f;
+            tmp.fontStyle = FontStyles.Normal;
+            tmp.color = new Color(1f, 0.95f, 0.35f, 1f);
             tmp.raycastTarget = false;
+            tmp.overflowMode = TextOverflowModes.Overflow;
+
+            var outline = go.AddComponent<Outline>();
+            outline.effectColor = new Color(0f, 0f, 0f, 1f);
+            outline.effectDistance = new Vector2(2f, -2f);
+            outline.useGraphicAlpha = true;
 
             var popup = go.AddComponent<DamageFloatPopup>();
             popup._label = tmp;
             popup._rectTransform = rect;
 
-            rect.position = worldPosition;
+            rect.position = canvasPosition;
             popup.Play(damage);
             return popup;
         }
