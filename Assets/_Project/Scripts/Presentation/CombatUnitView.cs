@@ -14,11 +14,14 @@ namespace Presentation
         [SerializeField] private Image _hpFill;
         [SerializeField] private Image _atbFill;
         [SerializeField] private Image _energyFill;
+        [SerializeField] [Min(0.1f)] private float _energyFlashSpeed = 4f;
         [SerializeField] private GameObject _energyRoot;
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private GameObject _root;
 
         private CombatUnit _unit;
+        private Color _energyBaseColor;
+        private bool _hasEnergyBaseColor;
         private float _displayedHpNormalized = 1f;
         private bool _showEnergy;
 
@@ -43,6 +46,7 @@ namespace Presentation
         public void Unbind()
         {
             _unit = null;
+            ResetEnergyColor();
         }
 
         /// <summary>
@@ -124,8 +128,39 @@ namespace Presentation
 
         private void ApplyEnergyFill(float normalized)
         {
-            if (_energyFill != null)
-                _energyFill.fillAmount = normalized;
+            if (_energyFill == null)
+                return;
+
+            CacheEnergyBaseColor();
+            _energyFill.fillAmount = normalized;
+
+            var isFull = _unit != null && _unit.MaxEnergy > 0 && _unit.Energy >= _unit.MaxEnergy;
+            if (isFull)
+            {
+                var t = Mathf.PingPong(Time.unscaledTime * _energyFlashSpeed, 1f);
+                var dim = _energyBaseColor * 0.45f;
+                dim.a = _energyBaseColor.a;
+                _energyFill.color = Color.Lerp(dim, _energyBaseColor, t);
+            }
+            else
+            {
+                _energyFill.color = _energyBaseColor;
+            }
+        }
+
+        private void CacheEnergyBaseColor()
+        {
+            if (_hasEnergyBaseColor || _energyFill == null)
+                return;
+
+            _energyBaseColor = _energyFill.color;
+            _hasEnergyBaseColor = true;
+        }
+
+        private void ResetEnergyColor()
+        {
+            if (_hasEnergyBaseColor && _energyFill != null)
+                _energyFill.color = _energyBaseColor;
         }
 
         private static float GetHpNormalized(CombatUnit unit)

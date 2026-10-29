@@ -27,6 +27,7 @@ namespace Exploration
         [SerializeField] private Vector3 _scrollStartLocalPosition = new Vector3(0f, 0.4f, 0f);
         [SerializeField] private Vector3 _scrollEndLocalPosition = Vector3.zero;
         [SerializeField] private VerticalSpriteScroller _grassScroller;
+        [SerializeField] [Min(0f)] private float _encounterStartDelay = 0.75f;
 
         [Header("Main HUD")]
         [SerializeField] private MainHUD _mainHUD;
@@ -158,6 +159,9 @@ namespace Exploration
 
         private void HandleEncounterReady()
         {
+            StopAdvanceFootsteps();
+            SetGrassScrolling(false);
+
             if (_stateMachine == null || _stateMachine.CurrentState != GameState.Exploration)
                 return;
 
@@ -197,6 +201,22 @@ namespace Exploration
             if (ServiceLocator.TryGet(out AudioService audio))
                 audio.PlayAdvanceFootsteps();
 
+            if (!RollEncounter())
+            {
+                Debug.LogError($"{nameof(ExplorationController)}: Failed to roll enemies for stage {_stageProgress?.CurrentStage}.", this);
+                StopAdvanceFootsteps();
+                SetGrassScrolling(false);
+                _isAdvancing = false;
+                _advanceRoutine = null;
+                _mainHUD?.ShowAdvanceOnly();
+                yield break;
+            }
+
+            if (_encounterStartDelay > 0f)
+                yield return new WaitForSeconds(_encounterStartDelay);
+
+            _encounterTrigger?.BeginEncounter(_rolledEnemies);
+
             var duration = Mathf.Max(0.01f, _advanceDuration);
             var elapsed = 0f;
 
@@ -223,20 +243,8 @@ namespace Exploration
             if (_scrollRoot != null)
                 _scrollRoot.localPosition = _scrollEndLocalPosition;
 
-            StopAdvanceFootsteps();
-            SetGrassScrolling(false);
             _isAdvancing = false;
             _advanceRoutine = null;
-
-            if (!RollEncounter())
-            {
-                Debug.LogError($"{nameof(ExplorationController)}: Failed to roll enemies for stage {_stageProgress?.CurrentStage}.", this);
-                SetGrassScrolling(false);
-                _mainHUD?.ShowAdvanceOnly();
-                yield break;
-            }
-
-            _encounterTrigger?.BeginEncounter(_rolledEnemies);
         }
 
         private bool RollEncounter()

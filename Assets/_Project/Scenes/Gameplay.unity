@@ -4979,11 +4979,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.EnemyEntrancePresenter
   _combatStage: {fileID: 1590266497}
-  _duration: 0.8
+  _foreground: {fileID: 1901477664}
+  _duration: 3
   _staggerSeconds: 0.12
-  _startScaleMultiplier: 0.25
-  _startYOffset: 4.5
-  _fadeIn: 0
+  _startScaleMultiplier: 0.22
+  _crestScaleMultiplier: 0.55
+  _behindDistance: 1.2
+  _walkSwayDegrees: 8
+  _walkSwayHz: 2.4
+  _behindSortingOrder: 0
   _playOnStart: 0
 --- !u!1 &1743252865
 GameObject:
@@ -6413,6 +6417,7 @@ MonoBehaviour:
   _scrollStartLocalPosition: {x: 0, y: 0.4, z: 0}
   _scrollEndLocalPosition: {x: 0, y: 0, z: 0}
   _grassScroller: {fileID: 1901477666}
+  _encounterStartDelay: 0.75
   _mainHUD: {fileID: 2200000003}
 --- !u!1 &2131453560
 GameObject:

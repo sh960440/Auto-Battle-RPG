@@ -5,16 +5,20 @@ using UnityEngine;
 namespace Presentation
 {
     /// <summary>
-    /// Enemies appear from the horizon, grow larger as they approach, and stop at slot position.
+    /// Walks enemies up from behind the foreground, crests the horizon, then down to the combat stage.
     /// </summary>
     public class EnemyEntrancePresenter : MonoBehaviour
     {
         [SerializeField] private CombatStage _combatStage;
-        [SerializeField] private float _duration = 0.8f;
+        [SerializeField] private Transform _foreground;
+        [SerializeField] [Min(0.1f)] private float _duration = 3f;
         [SerializeField] private float _staggerSeconds = 0.12f;
-        [SerializeField] private float _startScaleMultiplier = 0.25f;
-        [SerializeField] private float _startYOffset = 4.5f;
-        [SerializeField] private bool _fadeIn = true;
+        [SerializeField] [Range(0.05f, 1f)] private float _startScaleMultiplier = 0.22f;
+        [SerializeField] [Range(0.1f, 1f)] private float _crestScaleMultiplier = 0.55f;
+        [SerializeField] private float _behindDistance = 1.2f;
+        [SerializeField] private float _walkSwayDegrees = 8f;
+        [SerializeField] private float _walkSwayHz = 2.2f;
+        [SerializeField] private int _behindSortingOrder = 0;
         [SerializeField] private bool _playOnStart;
 
         private Coroutine _running;
@@ -38,9 +42,7 @@ namespace Presentation
                 return;
             }
 
-            if (_running != null)
-                StopCoroutine(_running);
-
+            StopAllCoroutines();
             _onComplete = onComplete;
             _running = StartCoroutine(PlayEntranceRoutine());
         }
@@ -57,7 +59,8 @@ namespace Presentation
             if (slot == null || !slot.gameObject.activeInHierarchy)
                 return;
 
-            StartCoroutine(AnimateSlot(slot, 0f));
+            var approach = CaptureAndHide(slot);
+            StartCoroutine(AnimateSlot(approach, 0f));
         }
 
 #if UNITY_EDITOR
@@ -90,7 +93,8 @@ namespace Presentation
                 if (slot == null || !slot.gameObject.activeInHierarchy)
                     continue;
 
-                StartCoroutine(AnimateSlot(slot, activeCount * _staggerSeconds));
+                var approach = CaptureAndHide(slot);
+                StartCoroutine(AnimateSlot(approach, activeCount * _staggerSeconds));
                 activeCount++;
             }
 
@@ -111,48 +115,124 @@ namespace Presentation
             complete?.Invoke();
         }
 
-        private IEnumerator AnimateSlot(Transform slot, float delay)
+        private SlotApproach CaptureAndHide(Transform slot)
+        {
+            var visual = slot.Find("Visual");
+            var renderers = slot.GetComponentsInChildren<SpriteRenderer>(true);
+            var endColors = new Color[renderers.Length];
+            var endOrders = new int[renderers.Length];
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                endColors[i] = renderers[i].color;
+                endOrders[i] = renderers[i].sortingOrder;
+            }
+
+            var endWorld = slot.position;
+            var endScale = slot.localScale;
+            var horizonY = GetHorizonWorldY();
+            var startWorld = new Vector3(endWorld.x, horizonY - _behindDistance, endWorld.z);
+            var startScale = endScale * _startScaleMultiplier;
+
+            SetSorting(renderers, _behindSortingOrder);
+            SetRenderersAlpha(renderers, endColors, 0f);
+            slot.position = startWorld;
+            slot.localScale = startScale;
+            if (visual != null)
+                visual.localRotation = Quaternion.identity;
+
+            return new SlotApproach
+            {
+                Slot = slot,
+                Visual = visual,
+                Renderers = renderers,
+                EndColors = endColors,
+                EndOrders = endOrders,
+                EndWorld = endWorld,
+                StartWorld = startWorld,
+                CrestWorld = new Vector3(endWorld.x, horizonY, endWorld.z),
+                EndScale = endScale,
+                StartScale = startScale,
+                CrestScale = endScale * _crestScaleMultiplier
+            };
+        }
+
+        private IEnumerator AnimateSlot(SlotApproach approach, float delay)
         {
             if (delay > 0f)
                 yield return new WaitForSeconds(delay);
 
-            var endLocalPos = slot.localPosition;
-            var endLocalScale = slot.localScale;
-            var startLocalPos = endLocalPos + new Vector3(0f, _startYOffset, 0f);
-            var startLocalScale = endLocalScale * _startScaleMultiplier;
-
-            var renderers = slot.GetComponentsInChildren<SpriteRenderer>(true);
-            var endColors = new Color[renderers.Length];
-            for (var i = 0; i < renderers.Length; i++)
-                endColors[i] = renderers[i].color;
-
-            slot.localPosition = startLocalPos;
-            slot.localScale = startLocalScale;
-            if (_fadeIn)
-                SetRenderersAlpha(renderers, endColors, 0f);
-
-            var elapsed = 0f;
             var duration = Mathf.Max(0.01f, _duration);
+            var crestAt = duration * 0.5f;
+            var elapsed = 0f;
+            var broughtToFront = false;
 
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                var t = Mathf.Clamp01(elapsed / duration);
-                // Ease-out so they settle naturally at the stop point.
-                var eased = 1f - (1f - t) * (1f - t);
+                var sway = Mathf.Sin(elapsed * Mathf.PI * 2f * _walkSwayHz) * _walkSwayDegrees;
+                if (approach.Visual != null)
+                    approach.Visual.localRotation = Quaternion.Euler(0f, 0f, sway);
 
-                slot.localPosition = Vector3.LerpUnclamped(startLocalPos, endLocalPos, eased);
-                slot.localScale = Vector3.LerpUnclamped(startLocalScale, endLocalScale, eased);
-                if (_fadeIn)
-                    SetRenderersAlpha(renderers, endColors, eased);
+                if (elapsed <= crestAt)
+                {
+                    var t = Smooth01(elapsed / crestAt);
+                    approach.Slot.position = Vector3.LerpUnclamped(approach.StartWorld, approach.CrestWorld, t);
+                    approach.Slot.localScale = Vector3.LerpUnclamped(approach.StartScale, approach.CrestScale, t);
+                    SetRenderersAlpha(approach.Renderers, approach.EndColors, t);
+                }
+                else
+                {
+                    if (!broughtToFront)
+                    {
+                        SetSorting(approach.Renderers, approach.EndOrders);
+                        SetRenderersAlpha(approach.Renderers, approach.EndColors, 1f);
+                        broughtToFront = true;
+                    }
+
+                    var t = Smooth01((elapsed - crestAt) / (duration - crestAt));
+                    approach.Slot.position = Vector3.LerpUnclamped(approach.CrestWorld, approach.EndWorld, t);
+                    approach.Slot.localScale = Vector3.LerpUnclamped(approach.CrestScale, approach.EndScale, t);
+                }
 
                 yield return null;
             }
 
-            slot.localPosition = endLocalPos;
-            slot.localScale = endLocalScale;
-            if (_fadeIn)
-                SetRenderersAlpha(renderers, endColors, 1f);
+            approach.Slot.position = approach.EndWorld;
+            approach.Slot.localScale = approach.EndScale;
+            if (approach.Visual != null)
+                approach.Visual.localRotation = Quaternion.identity;
+            SetSorting(approach.Renderers, approach.EndOrders);
+            SetRenderersAlpha(approach.Renderers, approach.EndColors, 1f);
+        }
+
+        private float GetHorizonWorldY()
+        {
+            if (_foreground == null)
+                return 0f;
+
+            var mask = _foreground.GetComponent<SpriteMask>();
+            if (mask != null)
+                return mask.bounds.max.y;
+
+            return _foreground.position.y;
+        }
+
+        private static float Smooth01(float t)
+        {
+            t = Mathf.Clamp01(t);
+            return t * t * (3f - 2f * t);
+        }
+
+        private static void SetSorting(SpriteRenderer[] renderers, int order)
+        {
+            for (var i = 0; i < renderers.Length; i++)
+                renderers[i].sortingOrder = order;
+        }
+
+        private static void SetSorting(SpriteRenderer[] renderers, int[] orders)
+        {
+            for (var i = 0; i < renderers.Length; i++)
+                renderers[i].sortingOrder = orders[i];
         }
 
         private static void SetRenderersAlpha(SpriteRenderer[] renderers, Color[] endColors, float alpha)
@@ -163,6 +243,21 @@ namespace Presentation
                 color.a = alpha;
                 renderers[i].color = color;
             }
+        }
+
+        private struct SlotApproach
+        {
+            public Transform Slot;
+            public Transform Visual;
+            public SpriteRenderer[] Renderers;
+            public Color[] EndColors;
+            public int[] EndOrders;
+            public Vector3 EndWorld;
+            public Vector3 StartWorld;
+            public Vector3 CrestWorld;
+            public Vector3 EndScale;
+            public Vector3 StartScale;
+            public Vector3 CrestScale;
         }
     }
 }
