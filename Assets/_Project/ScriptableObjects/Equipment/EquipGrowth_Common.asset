@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Data.EquipmentGrowthCurve
   _tier1MaxLevel: 10
   _tier1BonusPerLevel: 1
-  _tier2MaxLevel: 20
+  _tier2MaxLevel: 30
   _tier2BonusPerLevel: 2

@@ -18,69 +18,101 @@ MonoBehaviour:
     _isOpenEnded: 0
     _pressureType: 0
     _compositions:
-    - _label: Goblin
+    - _label: 2LeafImps
       _enemies:
       - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
-    - _label: Goblin + Orc
-      _enemies:
       - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
-      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
-    - _label: Dual Goblin + Orc
+    - _label: 1JupImp1LeafImp
       _enemies:
       - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
       - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+    - _label: 1JupImp2LeafImps
+      _enemies:
       - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
+    - _label: 2JupImps
+      _enemies:
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
   - _minStage: 31
-    _maxStage: 70
+    _maxStage: 60
     _isOpenEnded: 0
     _pressureType: 1
     _compositions:
-    - _label: Brute
+    - _label: 3JugImps
       _enemies:
-      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
-    - _label: Brute + Orc
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+    - _label: 1BlackfurImp1JugImp
       _enemies:
       - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
       - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
-    - _label: Dual Brute
+    - _label: 2BlackfurImps
       _enemies:
       - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
       - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
-  - _minStage: 71
-    _maxStage: 100
+    - _label: 2JugImps
+      _enemies:
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+  - _minStage: 61
+    _maxStage: 90
     _isOpenEnded: 0
     _pressureType: 2
     _compositions:
-    - _label: Dual Imp
+    - _label: 2LanternImp
       _enemies:
       - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
       - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
-    - _label: Triple Imp
+    - _label: 3LanternImp
       _enemies:
       - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
       - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
       - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
-    - _label: Imps + Goblin
+    - _label: 2LanternImp1LeafImp
       _enemies:
       - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
       - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
       - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
-  - _minStage: 101
+    - _label: 1JugImp2LanternImp
+      _enemies:
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
+  - _minStage: 91
     _maxStage: 999
     _isOpenEnded: 1
     _pressureType: 3
     _compositions:
-    - _label: Brute + Imp
+    - _label: 1BlackfurImp1LaternImp1LeafImp
       _enemies:
       - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
+      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
       - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
-    - _label: Brute + Dual Imp
+    - _label: 1BlackfurImp1JugImp1LeafImp
       _enemies:
       - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
-      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
-      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
-    - _label: Orc + Brute + Imp
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
+    - _label: 1JugImp1LanternImp1LeafImp
       _enemies:
       - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
-      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
       - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
+    - _label: 2BlackfurImps1LeafImp
+      _enemies:
+      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
+      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
+      - {fileID: 11400000, guid: c3a91f0e7b2d4c6598e1a0b3d6c4f728, type: 2}
+    - _label: 2JupImps1LeafImp
+      _enemies:
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+      - {fileID: 11400000, guid: b8d5f2a03c4e6b7591d0f3b2c9e7a4f6, type: 2}
+      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
+    - _label: 2LaternImps1LeafImp
+      _enemies:
+      - {fileID: 11400000, guid: f4b02e1f8c3e5d76a9f2b1c4e7d5a839, type: 2}
+      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}
+      - {fileID: 11400000, guid: a7c4e1f92b3d5a6480c9e2f1a8b6d3e5, type: 2}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Data.SkillDefinition
   _displayName: Heavy Strike
   _description: A focused blow that deals heavy single-target damage.
-  _icon: {fileID: 5873645000226630948, guid: 02db4fe50e1d69648abd87d87308c0dd, type: 3}
+  _icon: {fileID: -1084312110830862253, guid: c0fa746db9359ad4f907117c3a31281d, type: 3}
   _energyCost: 80
   _damageMultiplier: 1.5
   _isAoe: 0
