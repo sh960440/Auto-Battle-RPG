@@ -10,7 +10,7 @@ namespace Data.Tests
         {
             var definition = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 100, Attack = 12, Defense = 4, Speed = 10 },
                 UpgradeCurve.CreateRuntime(new StatBlock { HP = 5, Attack = 1, Defense = 1 }));
 
@@ -28,7 +28,7 @@ namespace Data.Tests
         {
             var definition = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 100, Attack = 12, Defense = 4, Speed = 10 },
                 UpgradeCurve.CreateRuntime(new StatBlock { HP = 5, Attack = 1, Defense = 1 }));
 
@@ -47,7 +47,7 @@ namespace Data.Tests
         {
             var definition = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 100, Attack = 12, Defense = 4, Speed = 10 },
                 UpgradeCurve.CreateRuntime(new StatBlock { HP = 5, Attack = 1, Defense = 1 }));
 
@@ -58,21 +58,21 @@ namespace Data.Tests
             var sword = EquipmentDefinition.CreateRuntime(
                 "Sword",
                 EquipmentSlot.RightHand,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 3,
                 growth);
 
             var vest = EquipmentDefinition.CreateRuntime(
                 "Vest",
                 EquipmentSlot.UpperBody,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 2,
                 growth);
 
             var pants = EquipmentDefinition.CreateRuntime(
                 "Pants",
                 EquipmentSlot.LowerBody,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 10,
                 growth);
 

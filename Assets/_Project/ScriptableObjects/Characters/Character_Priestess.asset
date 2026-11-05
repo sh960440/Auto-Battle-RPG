@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e3feb38c64c114438e7f4a7a7a7f0cc, type: 3}
-  m_Name: Character_Knight
+  m_Name: Character_Priestess
   m_EditorClassIdentifier: Assembly-CSharp::Data.CharacterDefinition
-  _displayName: Knight
+  _displayName: Blademaster
   _characterClass: 0
-  _portrait: {fileID: 21300000, guid: 55227a02c568a8c40a281e1cf3b83200, type: 3}
+  _portrait: {fileID: -1669450078160861664, guid: 3008b5596692b0849ade5027c4851107, type: 3}
+  _icon: {fileID: -4525448635714980420, guid: 81ae1e38993b3ff4b8f7ac6c7782271a, type: 3}
   _baseStats:
     HP: 120
     Attack: 10

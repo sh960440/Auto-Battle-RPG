@@ -8,9 +8,9 @@ namespace Data.Tests
         [Test]
         public void GetPrimaryStat_MapsClassesPerDesign()
         {
-            Assert.AreEqual(StatType.HP, CharacterClassRules.GetPrimaryStat(CharacterClass.Knight));
+            Assert.AreEqual(StatType.HP, CharacterClassRules.GetPrimaryStat(CharacterClass.Priestess));
             Assert.AreEqual(StatType.Attack, CharacterClassRules.GetPrimaryStat(CharacterClass.Swordsman));
-            Assert.AreEqual(StatType.Defense, CharacterClassRules.GetPrimaryStat(CharacterClass.ShieldGuard));
+            Assert.AreEqual(StatType.Defense, CharacterClassRules.GetPrimaryStat(CharacterClass.Blademaster));
         }
     }
 }

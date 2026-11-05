@@ -9,8 +9,9 @@ namespace Data
     public class CharacterDefinition : ScriptableObject
     {
         [SerializeField] private string _displayName;
-        [SerializeField] private CharacterClass _characterClass = CharacterClass.Knight;
+        [SerializeField] private CharacterClass _characterClass = CharacterClass.Priestess;
         [SerializeField] private Sprite _portrait;
+        [SerializeField] private Sprite _icon;
         [SerializeField] private StatBlock _baseStats;
         [SerializeField] private UpgradeCurve _upgradeCurve;
         [SerializeField] private SkillDefinition _defaultSkill;
@@ -21,6 +22,8 @@ namespace Data
         public CharacterClass CharacterClass => _characterClass;
 
         public Sprite Portrait => _portrait;
+
+        public Sprite Icon => _icon;
 
         public StatBlock BaseStats => _baseStats;
 

@@ -27,7 +27,7 @@ namespace Data.Tests
             var definition = EquipmentDefinition.CreateRuntime(
                 "Sword",
                 EquipmentSlot.RightHand,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 3);
 
             var item = EquipmentInstance.CreateForStage(definition, stage: 7);
@@ -42,7 +42,7 @@ namespace Data.Tests
             var definition = EquipmentDefinition.CreateRuntime(
                 "Sword",
                 EquipmentSlot.RightHand,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 3);
 
             var item = EquipmentInstance.CreateForStage(definition, stage: 50);

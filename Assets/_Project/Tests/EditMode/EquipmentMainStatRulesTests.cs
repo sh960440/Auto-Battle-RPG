@@ -17,9 +17,9 @@ namespace Data.Tests
         [Test]
         public void EquipmentDefinition_MainStatType_FollowsSlot()
         {
-            var left = EquipmentDefinition.CreateRuntime("Dagger", EquipmentSlot.LeftHand, CharacterClass.ShieldGuard, 2);
-            var right = EquipmentDefinition.CreateRuntime("Sword", EquipmentSlot.RightHand, CharacterClass.Knight, 3);
-            var upper = EquipmentDefinition.CreateRuntime("Vest", EquipmentSlot.UpperBody, CharacterClass.Knight, 2);
+            var left = EquipmentDefinition.CreateRuntime("Dagger", EquipmentSlot.LeftHand, CharacterClass.Blademaster, 2);
+            var right = EquipmentDefinition.CreateRuntime("Sword", EquipmentSlot.RightHand, CharacterClass.Priestess, 3);
+            var upper = EquipmentDefinition.CreateRuntime("Vest", EquipmentSlot.UpperBody, CharacterClass.Priestess, 2);
             var lower = EquipmentDefinition.CreateRuntime("Pants", EquipmentSlot.LowerBody, CharacterClass.Swordsman, 10);
 
             Assert.AreEqual(StatType.Attack, left.MainStatType);

@@ -9,7 +9,7 @@ namespace Data.Tests
         public void TryEquipFromInventory_EquipsEmptySlot_AndRemovesFromInventory()
         {
             var (profile, knight, service) = CreateKnightProfile();
-            var sword = CreateInventoryItem(profile, EquipmentSlot.RightHand, CharacterClass.Knight);
+            var sword = CreateInventoryItem(profile, EquipmentSlot.RightHand, CharacterClass.Priestess);
 
             Assert.IsTrue(service.TryEquipFromInventory(profile, knight, sword));
             Assert.AreSame(sword, knight.GetEquipment(EquipmentSlot.RightHand));
@@ -20,8 +20,8 @@ namespace Data.Tests
         public void TryEquipFromInventory_OverwritesSlot_AndDiscardsPrevious()
         {
             var (profile, knight, service) = CreateKnightProfile();
-            var oldSword = CreateInventoryItem(profile, EquipmentSlot.RightHand, CharacterClass.Knight, "Old Sword");
-            var newSword = CreateInventoryItem(profile, EquipmentSlot.RightHand, CharacterClass.Knight, "New Sword");
+            var oldSword = CreateInventoryItem(profile, EquipmentSlot.RightHand, CharacterClass.Priestess, "Old Sword");
+            var newSword = CreateInventoryItem(profile, EquipmentSlot.RightHand, CharacterClass.Priestess, "New Sword");
 
             Assert.IsTrue(service.TryEquipFromInventory(profile, knight, oldSword));
 
@@ -60,7 +60,7 @@ namespace Data.Tests
                 EquipmentDefinition.CreateRuntime(
                     "Sword",
                     EquipmentSlot.RightHand,
-                    CharacterClass.Knight,
+                    CharacterClass.Priestess,
                     baseMainStat: 3),
                 level: 1);
 
@@ -72,7 +72,7 @@ namespace Data.Tests
         {
             var definition = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 100, Attack = 10, Defense = 5, Speed = 10 });
 
             var profile = PlayerProfile.CreateStarter(0, definition);

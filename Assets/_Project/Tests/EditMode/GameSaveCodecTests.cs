@@ -11,21 +11,21 @@ namespace Data.Tests
         {
             var knight = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 120, Attack = 10, Defense = 4, Speed = 9 });
             knight.name = "Character_Knight";
 
             var sword = EquipmentDefinition.CreateRuntime(
                 "Iron Sword",
                 EquipmentSlot.RightHand,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 5);
             sword.name = "Equipment_Iron Sword";
 
             var vest = EquipmentDefinition.CreateRuntime(
                 "Padded Coat",
                 EquipmentSlot.UpperBody,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 3);
             vest.name = "Equipment_Padded Coat";
 
@@ -59,7 +59,7 @@ namespace Data.Tests
         {
             var knight = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 100, Attack = 8, Defense = 3, Speed = 8 });
             knight.name = "Character_Knight";
 
@@ -91,14 +91,14 @@ namespace Data.Tests
         {
             var knight = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 120, Attack = 10, Defense = 4, Speed = 9 });
             knight.name = "Character_Knight";
 
             var sidearm = EquipmentDefinition.CreateRuntime(
                 "Knight Sidearm",
                 EquipmentSlot.LeftHand,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 2);
             sidearm.name = "Equipment_Knight Sidearm";
 

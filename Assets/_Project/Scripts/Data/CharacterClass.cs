@@ -5,8 +5,9 @@ namespace Data
     /// </summary>
     public enum CharacterClass
     {
-        Knight = 0,
+        Priestess = 0,
         Swordsman = 1,
-        ShieldGuard = 2
+        Blademaster = 2,
+        Shamaness = 3
     }
 }

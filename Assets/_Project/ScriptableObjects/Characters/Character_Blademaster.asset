@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e3feb38c64c114438e7f4a7a7a7f0cc, type: 3}
-  m_Name: Character_ShieldGuard
+  m_Name: Character_Blademaster
   m_EditorClassIdentifier: Assembly-CSharp::Data.CharacterDefinition
-  _displayName: Shield Guard
+  _displayName: Blademaster
   _characterClass: 2
-  _portrait: {fileID: 21300000, guid: 55227a02c568a8c40a281e1cf3b83200, type: 3}
+  _portrait: {fileID: -1612686449, guid: 3008b5596692b0849ade5027c4851107, type: 3}
+  _icon: {fileID: 492380911906358504, guid: 485cb499d1ad5bd49bd8405596c477c8, type: 3}
   _baseStats:
     HP: 110
     Attack: 8

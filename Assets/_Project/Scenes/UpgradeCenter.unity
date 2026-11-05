@@ -5711,7 +5711,7 @@ MonoBehaviour:
   _spdAmountText: {fileID: 1803703106}
   _costAmountText: {fileID: 876647053}
   _levelUpButton: {fileID: 1733331167}
-  _statNormalColor: {r: 1, g: 1, b: 1, a: 1}
+  _statNormalColor: {r: 0, g: 0, b: 0, a: 1}
   _statPreviewColor: {r: 0.45, g: 0.95, b: 0.55, a: 1}
   _leftHandSlot: {fileID: 1023506731}
   _rightHandSlot: {fileID: 79195143}
@@ -7089,9 +7089,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -1669450078160861664, guid: 3008b5596692b0849ade5027c4851107, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

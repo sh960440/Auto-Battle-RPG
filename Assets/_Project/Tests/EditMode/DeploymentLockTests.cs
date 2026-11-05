@@ -10,7 +10,7 @@ namespace Data.Tests
         {
             var knight = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 100, Attack = 10, Defense = 5, Speed = 10 });
             var swordsman = CharacterDefinition.CreateRuntime(
                 "Swordsman",
@@ -35,7 +35,7 @@ namespace Data.Tests
             var skill = SkillDefinition.CreateRuntime("Heavy Strike", 80, 1.5f);
             var knight = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 100, Attack = 10, Defense = 5, Speed = 10 },
                 UpgradeCurve.CreateRuntime(new StatBlock { HP = 5, Attack = 1, Defense = 1 }),
                 skill);
@@ -62,7 +62,7 @@ namespace Data.Tests
         {
             var knight = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 100, Attack = 10, Defense = 5, Speed = 10 });
             var swordsman = CharacterDefinition.CreateRuntime(
                 "Swordsman",

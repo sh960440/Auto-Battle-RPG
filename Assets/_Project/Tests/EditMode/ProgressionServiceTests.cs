@@ -10,7 +10,7 @@ namespace Data.Tests
         {
             var definition = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 100, Attack = 10, Defense = 4, Speed = 9 },
                 UpgradeCurve.CreateRuntime(new StatBlock { HP = 5, Attack = 1, Defense = 1 }));
 
@@ -29,7 +29,7 @@ namespace Data.Tests
         {
             var definition = CharacterDefinition.CreateRuntime(
                 "Knight",
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 new StatBlock { HP = 100, Attack = 10, Defense = 4, Speed = 9 },
                 UpgradeCurve.CreateRuntime(new StatBlock { HP = 5, Attack = 1, Defense = 1 }));
 

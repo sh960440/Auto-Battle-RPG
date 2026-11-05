@@ -14,9 +14,9 @@ namespace Data
         {
             return characterClass switch
             {
-                CharacterClass.Knight => StatType.HP,
+                CharacterClass.Priestess => StatType.HP,
                 CharacterClass.Swordsman => StatType.Attack,
-                CharacterClass.ShieldGuard => StatType.Defense,
+                CharacterClass.Blademaster => StatType.Defense,
                 _ => throw new ArgumentOutOfRangeException(nameof(characterClass), characterClass, null)
             };
         }
@@ -28,9 +28,9 @@ namespace Data
         {
             return characterClass switch
             {
-                CharacterClass.Knight => "Knight",
+                CharacterClass.Priestess => "Priestess",
                 CharacterClass.Swordsman => "Swordsman",
-                CharacterClass.ShieldGuard => "Shield Guard",
+                CharacterClass.Blademaster => "Blademaster",
                 _ => characterClass.ToString()
             };
         }

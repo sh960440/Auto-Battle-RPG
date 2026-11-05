@@ -47,7 +47,7 @@ namespace Presentation
         [SerializeField] private TMP_Text _spdAmountText;
         [SerializeField] private TMP_Text _costAmountText;
         [SerializeField] private Button _levelUpButton;
-        [SerializeField] private Color _statNormalColor = Color.white;
+        [SerializeField] private Color _statNormalColor = Color.black;
         [SerializeField] private Color _statPreviewColor = new Color(0.45f, 0.95f, 0.55f, 1f);
 
         [Header("Equipped Slots")]
@@ -291,12 +291,20 @@ namespace Presentation
                 var character = characters[i];
                 if (image != null)
                 {
-                    image.sprite = character.Definition != null ? character.Definition.Portrait : null;
+                    image.sprite = ResolveRosterIcon(character.Definition);
                     image.color = i == selectedIndex
                         ? Color.white
                         : new Color(1f, 1f, 1f, 0.85f);
                 }
             }
+        }
+
+        private static Sprite ResolveRosterIcon(CharacterDefinition definition)
+        {
+            if (definition == null)
+                return null;
+
+            return definition.Icon != null ? definition.Icon : definition.Portrait;
         }
 
         private void RefreshSelectedCharacter()

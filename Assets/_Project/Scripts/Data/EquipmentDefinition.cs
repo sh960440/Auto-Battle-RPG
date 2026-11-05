@@ -11,7 +11,7 @@ namespace Data
         [SerializeField] private string _displayName;
         [SerializeField] private EquipmentSlot _slot;
         [SerializeField] private EquipmentQuality _quality;
-        [SerializeField] private CharacterClass _requiredClass = CharacterClass.Knight;
+        [SerializeField] private CharacterClass _requiredClass = CharacterClass.Priestess;
         [SerializeField] private Sprite _icon;
         [SerializeField] private int _baseMainStat = 1;
         [SerializeField] private EquipmentGrowthCurve _growthCurve;

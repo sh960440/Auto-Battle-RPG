@@ -27,7 +27,7 @@ namespace Data.Tests
             var sword = EquipmentDefinition.CreateRuntime(
                 "Iron Sword",
                 EquipmentSlot.RightHand,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 5,
                 quality: EquipmentQuality.Common);
             var table = LootTable.CreateRuntime(5, 5, 1f, LootEntry.Create(sword, 1));
@@ -56,7 +56,7 @@ namespace Data.Tests
             var knightItem = EquipmentDefinition.CreateRuntime(
                 "Knight Blade",
                 EquipmentSlot.RightHand,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 4);
             var swordItem = EquipmentDefinition.CreateRuntime(
                 "Sword Blade",
@@ -78,8 +78,8 @@ namespace Data.Tests
 
             for (var i = 0; i < rolls; i++)
             {
-                var drop = service.Roll(table, stage: 1, preferredClass: CharacterClass.Knight, random: random);
-                if (drop.Item != null && drop.Item.RequiredClass == CharacterClass.Knight)
+                var drop = service.Roll(table, stage: 1, preferredClass: CharacterClass.Priestess, random: random);
+                if (drop.Item != null && drop.Item.RequiredClass == CharacterClass.Priestess)
                     knightCount++;
             }
 
@@ -92,7 +92,7 @@ namespace Data.Tests
             var sword = EquipmentDefinition.CreateRuntime(
                 "Iron Sword",
                 EquipmentSlot.RightHand,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 5);
             var drop = new LootDrop(12, new EquipmentInstance(sword, 8));
 
@@ -109,7 +109,7 @@ namespace Data.Tests
             var sword = EquipmentDefinition.CreateRuntime(
                 "Iron Sword",
                 EquipmentSlot.RightHand,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 5);
             var profile = PlayerProfile.CreateStarter(100);
             var drop = new LootDrop(12, new EquipmentInstance(sword, 3));

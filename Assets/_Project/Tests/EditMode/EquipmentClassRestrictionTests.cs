@@ -12,23 +12,23 @@ namespace Data.Tests
             var sword = EquipmentDefinition.CreateRuntime(
                 "Sword",
                 EquipmentSlot.RightHand,
-                CharacterClass.Knight,
+                CharacterClass.Priestess,
                 baseMainStat: 3);
 
-            Assert.IsTrue(sword.CanBeEquippedBy(CharacterClass.Knight));
+            Assert.IsTrue(sword.CanBeEquippedBy(CharacterClass.Priestess));
             Assert.IsFalse(sword.CanBeEquippedBy(CharacterClass.Swordsman));
-            Assert.IsFalse(sword.CanBeEquippedBy(CharacterClass.ShieldGuard));
+            Assert.IsFalse(sword.CanBeEquippedBy(CharacterClass.Blademaster));
         }
 
         [Test]
         public void Equip_AllowsMatchingClass()
         {
-            var knight = CreateCharacter(CharacterClass.Knight);
+            var knight = CreateCharacter(CharacterClass.Priestess);
             var sword = new EquipmentInstance(
                 EquipmentDefinition.CreateRuntime(
                     "Sword",
                     EquipmentSlot.RightHand,
-                    CharacterClass.Knight,
+                    CharacterClass.Priestess,
                     baseMainStat: 3),
                 level: 1);
 
@@ -45,7 +45,7 @@ namespace Data.Tests
                 EquipmentDefinition.CreateRuntime(
                     "Sword",
                     EquipmentSlot.RightHand,
-                    CharacterClass.Knight,
+                    CharacterClass.Priestess,
                     baseMainStat: 3),
                 level: 1);
 
