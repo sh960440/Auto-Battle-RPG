@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Data.CharacterDefinition
   _displayName: Swordsman
   _characterClass: 1
-  _portrait: {fileID: 1648700397, guid: 3008b5596692b0849ade5027c4851107, type: 3}
+  _portrait: {fileID: -1669450078160861664, guid: 3008b5596692b0849ade5027c4851107, type: 3}
   _icon: {fileID: 5705834958573896531, guid: 1a66b4c07af5108479bb8dab000514b2, type: 3}
   _baseStats:
     HP: 90

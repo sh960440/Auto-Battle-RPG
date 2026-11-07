@@ -68,6 +68,38 @@ namespace Data.Tests
             Assert.IsNull(knight.GetEquipment(EquipmentSlot.RightHand));
         }
 
+        [Test]
+        public void TrySellFromInventory_RemovesItemAndAddsGold()
+        {
+            var (profile, _, service) = CreateKnightProfile();
+            var shield = CreateInventoryItem(
+                profile,
+                EquipmentSlot.LeftHand,
+                CharacterClass.Swordsman,
+                "Wooden Shield",
+                level: 8);
+
+            Assert.IsTrue(service.TrySellFromInventory(profile, shield));
+            Assert.AreEqual(0, profile.Inventory.Count);
+            Assert.AreEqual(8, profile.Gold);
+        }
+
+        [Test]
+        public void TrySellFromInventory_RejectsItemNotInInventory()
+        {
+            var (profile, _, service) = CreateKnightProfile();
+            var shield = new EquipmentInstance(
+                EquipmentDefinition.CreateRuntime(
+                    "Wooden Shield",
+                    EquipmentSlot.LeftHand,
+                    CharacterClass.Swordsman,
+                    baseMainStat: 2),
+                level: 8);
+
+            Assert.IsFalse(service.TrySellFromInventory(profile, shield));
+            Assert.AreEqual(0, profile.Gold);
+        }
+
         private static (PlayerProfile profile, CharacterInstance knight, EquipmentService service) CreateKnightProfile()
         {
             var definition = CharacterDefinition.CreateRuntime(
@@ -83,11 +115,12 @@ namespace Data.Tests
             PlayerProfile profile,
             EquipmentSlot slot,
             CharacterClass requiredClass,
-            string name = "Item")
+            string name = "Item",
+            int level = 1)
         {
             var item = new EquipmentInstance(
                 EquipmentDefinition.CreateRuntime(name, slot, requiredClass, baseMainStat: 3),
-                level: 1);
+                level);
             profile.AddToInventory(item);
             return item;
         }

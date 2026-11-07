@@ -55,6 +55,33 @@ namespace Data
             return true;
         }
 
+        /// <summary>
+        /// Whether the item can be sold from inventory.
+        /// </summary>
+        public bool CanSellFromInventory(PlayerProfile profile, EquipmentInstance item)
+        {
+            if (profile == null || item == null)
+                return false;
+
+            return IsInInventory(profile, item);
+        }
+
+        /// <summary>
+        /// Removes <paramref name="item"/> from inventory and adds its sell gold.
+        /// </summary>
+        /// <returns><c>true</c> when the sale succeeded.</returns>
+        public bool TrySellFromInventory(PlayerProfile profile, EquipmentInstance item)
+        {
+            if (!CanSellFromInventory(profile, item))
+                return false;
+
+            if (!profile.RemoveFromInventory(item))
+                return false;
+
+            profile.AddGold(EquipmentSellRules.GetSellPrice(item));
+            return true;
+        }
+
         private void Discard(CharacterInstance character, EquipmentInstance previous)
         {
             ItemDiscarded?.Invoke(character, previous);

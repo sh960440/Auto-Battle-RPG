@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Data.CharacterDefinition
   _displayName: Blademaster
   _characterClass: 2
-  _portrait: {fileID: -1612686449, guid: 3008b5596692b0849ade5027c4851107, type: 3}
+  _portrait: {fileID: 1648700397, guid: 3008b5596692b0849ade5027c4851107, type: 3}
   _icon: {fileID: 492380911906358504, guid: 485cb499d1ad5bd49bd8405596c477c8, type: 3}
   _baseStats:
     HP: 110

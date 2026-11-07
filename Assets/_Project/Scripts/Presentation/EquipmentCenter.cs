@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Presentation
 {
     /// <summary>
-    /// Equipment tab: inventory slots, hover compare, click-to-equip.
+    /// Equipment tab: inventory slots, hover tooltip, click-to-select, equip or sell.
     /// </summary>
     public class EquipmentCenter : MonoBehaviour
     {
@@ -25,6 +25,14 @@ namespace Presentation
         [SerializeField] private GameObject _itemTooltip;
         [SerializeField] private TMP_Text _tooltipText;
         [SerializeField] private TMP_Text _descriptionText;
+        [SerializeField] private Button _equipButton;
+        [SerializeField] private Button _sellButton;
+
+        [Header("Equipped Slots")]
+        [SerializeField] private Image _leftHandSlot;
+        [SerializeField] private Image _rightHandSlot;
+        [SerializeField] private Image _upperBodySlot;
+        [SerializeField] private Image _lowerBodySlot;
 
         [Header("Optional legacy hooks")]
         [SerializeField] private GameObject _panelRoot;
@@ -35,6 +43,11 @@ namespace Presentation
         private EquipmentService _equipmentService;
         private bool _entryAvailable = true;
         private RectTransform _tooltipRect;
+        private EquipmentInstance _selectedItem;
+        private GameObject _selectedSlot;
+        private TMP_Text _sellButtonLabel;
+        private UnityEngine.Events.UnityAction _equipAction;
+        private UnityEngine.Events.UnityAction _sellAction;
 
         /// <summary>
         /// Whether the equipment panel is visible.
@@ -46,9 +59,14 @@ namespace Presentation
         private void Awake()
         {
             EnsureServices();
+            _equipAction = HandleEquipSelected;
+            _sellAction = HandleSellSelected;
             if (_itemSlotTemplate != null)
                 _itemSlotTemplate.SetActive(false);
             HideTooltip();
+            ResolveSellButtonLabel();
+            WireEquippedSlotHovers();
+            RefreshSelectionPanel();
             if (_panelRoot != null)
                 _panelRoot.SetActive(false);
         }
@@ -56,6 +74,7 @@ namespace Presentation
         private void OnEnable()
         {
             EnsureServices();
+            ResolveSellButtonLabel();
             BindButtons(true);
 
             if (_profileService != null)
@@ -79,6 +98,12 @@ namespace Presentation
 
         private void Update()
         {
+            TryClearSelectionOnOutsideClick();
+            UpdateTooltipPosition();
+        }
+
+        private void UpdateTooltipPosition()
+        {
             if (_itemTooltip == null || !_itemTooltip.activeSelf || _tooltipRect == null)
                 return;
 
@@ -99,6 +124,51 @@ namespace Presentation
             pos.x = Mathf.Clamp(pos.x, 0f, Mathf.Max(0f, Screen.width - width));
             pos.y = Mathf.Clamp(pos.y, 0f, Mathf.Max(0f, Screen.height - height));
             _tooltipRect.position = pos;
+        }
+
+        private void TryClearSelectionOnOutsideClick()
+        {
+            if (_selectedItem == null)
+                return;
+
+            var eventSystem = EventSystem.current;
+            if (eventSystem == null)
+                return;
+
+            var current = eventSystem.currentSelectedGameObject;
+            if (ShouldKeepSelection(current))
+                return;
+
+            ClearSelection();
+        }
+
+        private bool ShouldKeepSelection(GameObject current)
+        {
+            if (current == null)
+                return false;
+
+            if (current == _selectedSlot)
+                return true;
+
+            if (_listContent != null && current.transform.IsChildOf(_listContent))
+                return true;
+
+            return IsUnder(current, _equipButton) || IsUnder(current, _sellButton);
+        }
+
+        private static bool IsUnder(GameObject current, Button button)
+        {
+            if (button == null || current == null)
+                return false;
+
+            return current == button.gameObject || current.transform.IsChildOf(button.transform);
+        }
+
+        private void ClearSelection()
+        {
+            _selectedItem = null;
+            _selectedSlot = null;
+            RefreshSelectionPanel();
         }
 
         /// <summary>
@@ -187,6 +257,9 @@ namespace Presentation
                 if (bind)
                     _closeButton.onClick.AddListener(Hide);
             }
+
+            BindButton(_equipButton, _equipAction, bind);
+            BindButton(_sellButton, _sellAction, bind);
         }
 
         private void RebuildList(PlayerProfile profile, CharacterInstance character)
@@ -212,8 +285,13 @@ namespace Presentation
 
             ApplyContentHeight(count);
             HideTooltip();
-            if (_descriptionText != null && (profile == null || count == 0))
-                _descriptionText.text = string.Empty;
+            if (!IsInInventory(profile, _selectedItem))
+            {
+                _selectedItem = null;
+                _selectedSlot = null;
+            }
+
+            RefreshSelectionPanel();
         }
 
         private void ClearSpawnedSlots()
@@ -249,22 +327,43 @@ namespace Presentation
                 icon.color = sprite != null ? Color.white : new Color(1f, 1f, 1f, 0.15f);
             }
 
-            var canEquip = character != null &&
-                           _equipmentService.CanEquipFromInventory(_profileService.Profile, character, item);
-
             var button = slot.GetComponent<Button>();
             if (button != null)
             {
-                button.interactable = canEquip;
+                button.interactable = true;
                 var captured = item;
                 button.onClick.RemoveAllListeners();
-                button.onClick.AddListener(() => HandleEquip(captured));
+                button.onClick.AddListener(() => HandleSelect(captured, slot));
             }
 
-            WireHover(slot, item, character);
+            WireHover(slot, () => item, compareToEquipped: true);
         }
 
-        private void WireHover(GameObject slot, EquipmentInstance item, CharacterInstance character)
+        private void WireEquippedSlotHovers()
+        {
+            WireEquippedSlotHover(_leftHandSlot, EquipmentSlot.LeftHand);
+            WireEquippedSlotHover(_rightHandSlot, EquipmentSlot.RightHand);
+            WireEquippedSlotHover(_upperBodySlot, EquipmentSlot.UpperBody);
+            WireEquippedSlotHover(_lowerBodySlot, EquipmentSlot.LowerBody);
+        }
+
+        private void WireEquippedSlotHover(Image slot, EquipmentSlot equipmentSlot)
+        {
+            if (slot == null)
+                return;
+
+            slot.raycastTarget = true;
+            WireHover(slot.gameObject, () =>
+            {
+                var character = _profileService?.Profile?.SelectedCharacter;
+                if (character == null || !character.TryGetEquipment(equipmentSlot, out var item))
+                    return null;
+
+                return item;
+            }, compareToEquipped: false);
+        }
+
+        private void WireHover(GameObject slot, System.Func<EquipmentInstance> resolveItem, bool compareToEquipped)
         {
             var trigger = slot.GetComponent<EventTrigger>();
             if (trigger == null)
@@ -273,7 +372,17 @@ namespace Presentation
             trigger.triggers.Clear();
 
             var enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
-            enter.callback.AddListener(_ => ShowItemDetails(item, character));
+            enter.callback.AddListener(_ =>
+            {
+                var item = resolveItem != null ? resolveItem() : null;
+                if (item == null)
+                {
+                    HideTooltip();
+                    return;
+                }
+
+                ShowTooltip(item, _profileService?.Profile?.SelectedCharacter, compareToEquipped);
+            });
             trigger.triggers.Add(enter);
 
             var exit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
@@ -281,21 +390,12 @@ namespace Presentation
             trigger.triggers.Add(exit);
         }
 
-        private void ShowItemDetails(EquipmentInstance item, CharacterInstance character)
+        private void ShowTooltip(EquipmentInstance item, CharacterInstance character, bool compareToEquipped)
         {
-            if (_descriptionText != null)
-            {
-                _descriptionText.text =
-                    $"{item.DisplayName}\n" +
-                    $"Slot: {item.Slot}\n" +
-                    $"Class: {CharacterClassRules.GetDisplayName(item.RequiredClass)}\n" +
-                    $"Lv{item.Level}  {item.Quality}  +{item.GetMainStat()} {item.MainStatType}";
-            }
-
-            if (_itemTooltip == null || _tooltipText == null)
+            if (_itemTooltip == null || _tooltipText == null || item == null)
                 return;
 
-            _tooltipText.text = BuildTooltip(item, character);
+            _tooltipText.text = BuildTooltip(item, character, compareToEquipped);
             if (_tooltipRect == null)
                 _tooltipRect = _itemTooltip.GetComponent<RectTransform>();
 
@@ -308,22 +408,123 @@ namespace Presentation
                 _itemTooltip.SetActive(false);
         }
 
-        private void HandleEquip(EquipmentInstance item)
+        private void HandleSelect(EquipmentInstance item, GameObject slot)
+        {
+            _selectedItem = item;
+            _selectedSlot = slot;
+            RefreshSelectionPanel();
+        }
+
+        private void HandleEquipSelected()
         {
             EnsureServices();
             var profile = _profileService?.Profile;
             var character = profile?.SelectedCharacter;
-            if (profile == null || character == null)
+            if (profile == null || character == null || _selectedItem == null)
                 return;
 
-            if (!_equipmentService.TryEquipFromInventory(profile, character, item))
+            if (!_equipmentService.TryEquipFromInventory(profile, character, _selectedItem))
                 return;
 
+            _selectedItem = null;
+            _selectedSlot = null;
             HideTooltip();
             _profileService.NotifyLoadoutChanged();
             if (ServiceLocator.TryGet(out SaveSystem saveSystem))
                 saveSystem.SaveCurrent();
             Refresh();
+        }
+
+        private void HandleSellSelected()
+        {
+            EnsureServices();
+            var profile = _profileService?.Profile;
+            if (profile == null || _selectedItem == null)
+                return;
+
+            if (!_equipmentService.TrySellFromInventory(profile, _selectedItem))
+                return;
+
+            _selectedItem = null;
+            _selectedSlot = null;
+            HideTooltip();
+            _profileService.NotifyLoadoutChanged();
+            if (ServiceLocator.TryGet(out SaveSystem saveSystem))
+                saveSystem.SaveCurrent();
+            Refresh();
+        }
+
+        private void RefreshSelectionPanel()
+        {
+            ResolveSellButtonLabel();
+
+            var item = _selectedItem;
+            if (item == null)
+            {
+                if (_descriptionText != null)
+                    _descriptionText.text = string.Empty;
+                SetButtonVisible(_equipButton, false);
+                SetButtonVisible(_sellButton, false);
+                return;
+            }
+
+            if (_descriptionText != null)
+                _descriptionText.text = $"{item.DisplayName}\nLv{item.Level}";
+
+            SetButtonVisible(_equipButton, true);
+            SetButtonVisible(_sellButton, true);
+
+            var profile = _profileService?.Profile;
+            var character = profile?.SelectedCharacter;
+            if (_equipButton != null)
+            {
+                _equipButton.interactable = _equipmentService != null &&
+                                           _equipmentService.CanEquipFromInventory(profile, character, item);
+            }
+
+            if (_sellButton != null)
+                _sellButton.interactable = _equipmentService != null &&
+                                           _equipmentService.CanSellFromInventory(profile, item);
+
+            if (_sellButtonLabel != null)
+                _sellButtonLabel.text = $"Sell ({EquipmentSellRules.GetSellPrice(item)})";
+        }
+
+        private void ResolveSellButtonLabel()
+        {
+            if (_sellButtonLabel == null && _sellButton != null)
+                _sellButtonLabel = _sellButton.GetComponentInChildren<TMP_Text>(true);
+        }
+
+        private static void BindButton(Button button, UnityEngine.Events.UnityAction action, bool bind)
+        {
+            if (button == null || action == null)
+                return;
+
+            button.onClick.RemoveListener(action);
+            if (bind)
+                button.onClick.AddListener(action);
+        }
+
+        private static void SetButtonVisible(Button button, bool visible)
+        {
+            if (button != null)
+                button.gameObject.SetActive(visible);
+        }
+
+        private static bool IsInInventory(PlayerProfile profile, EquipmentInstance item)
+        {
+            if (profile == null || item == null)
+                return false;
+
+            var inventory = profile.Inventory;
+            for (var i = 0; i < inventory.Count; i++)
+            {
+                if (inventory[i] == item)
+                    return true;
+            }
+
+            return false;
         }
 
         private void ApplyContentHeight(int itemCount)
@@ -351,30 +552,23 @@ namespace Presentation
             return child != null ? child.GetComponent<Image>() : null;
         }
 
-        private static string BuildTooltip(EquipmentInstance item, CharacterInstance character)
+        private static string BuildTooltip(EquipmentInstance item, CharacterInstance character, bool compareToEquipped)
         {
-            var main = $"+{item.GetMainStat()} {item.MainStatType}";
-            var header =
-                $"{item.DisplayName}\n" +
-                $"{item.Slot}  |  {CharacterClassRules.GetDisplayName(item.RequiredClass)}\n" +
-                $"Lv{item.Level}  {item.Quality}  {main}";
+            var text =
+                $"{item.DisplayName} Lv{item.Level}\n" +
+                $"{CharacterClassRules.GetDisplayName(item.RequiredClass)} - {item.Quality}\n" +
+                $"{item.GetMainStat()} {item.MainStatType}";
 
-            if (character == null)
-                return header;
+            if (!compareToEquipped || character == null)
+                return text;
 
-            if (!character.CanEquip(item))
-                return header + "\nWrong class.";
+            var current = 0;
+            if (character.TryGetEquipment(item.Slot, out var equipped) && equipped != null)
+                current = equipped.GetMainStat();
 
-            if (character.TryGetEquipment(item.Slot, out var equipped))
-            {
-                var delta = item.GetMainStat() - equipped.GetMainStat();
-                var deltaText = delta >= 0 ? $"+{delta}" : delta.ToString();
-                return header +
-                       $"\nEquipped: {equipped.DisplayName} Lv{equipped.Level} +{equipped.GetMainStat()} {equipped.MainStatType}" +
-                       $"\nΔ {deltaText} {item.MainStatType}";
-            }
-
-            return header + $"\nEquipped: (empty)\n→ {main}";
+            var delta = item.GetMainStat() - current;
+            var deltaText = delta >= 0 ? $"+{delta}" : delta.ToString();
+            return text + $"\nΔ {deltaText} {item.MainStatType}";
         }
     }
 }

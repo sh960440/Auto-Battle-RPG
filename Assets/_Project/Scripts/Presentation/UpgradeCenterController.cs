@@ -281,8 +281,7 @@ namespace Presentation
                 {
                     if (image != null)
                     {
-                        image.sprite = null;
-                        image.color = new Color(1f, 1f, 1f, 0.25f);
+                        image.color = new Color(1f, 1f, 1f, 0.75f);
                     }
 
                     continue;
