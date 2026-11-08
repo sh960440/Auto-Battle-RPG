@@ -208,6 +208,7 @@ namespace Exploration
                 SetGrassScrolling(false);
                 _isAdvancing = false;
                 _advanceRoutine = null;
+                UnlockDeployment();
                 _mainHUD?.ShowAdvanceOnly();
                 yield break;
             }

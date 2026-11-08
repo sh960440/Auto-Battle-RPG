@@ -34,27 +34,14 @@ namespace Presentation
         [SerializeField] private Image _upperBodySlot;
         [SerializeField] private Image _lowerBodySlot;
 
-        [Header("Optional legacy hooks")]
-        [SerializeField] private GameObject _panelRoot;
-        [SerializeField] private Button _openButton;
-        [SerializeField] private Button _closeButton;
-
         private PlayerProfileService _profileService;
         private EquipmentService _equipmentService;
-        private bool _entryAvailable = true;
         private RectTransform _tooltipRect;
         private EquipmentInstance _selectedItem;
         private GameObject _selectedSlot;
         private TMP_Text _sellButtonLabel;
         private UnityEngine.Events.UnityAction _equipAction;
         private UnityEngine.Events.UnityAction _sellAction;
-
-        /// <summary>
-        /// Whether the equipment panel is visible.
-        /// </summary>
-        public bool IsOpen => _panelRoot != null && _panelRoot.activeSelf;
-
-        public bool IsEntryAvailable => _entryAvailable;
 
         private void Awake()
         {
@@ -67,8 +54,6 @@ namespace Presentation
             ResolveSellButtonLabel();
             WireEquippedSlotHovers();
             RefreshSelectionPanel();
-            if (_panelRoot != null)
-                _panelRoot.SetActive(false);
         }
 
         private void OnEnable()
@@ -172,49 +157,6 @@ namespace Presentation
         }
 
         /// <summary>
-        /// Opens the equipment panel.
-        /// </summary>
-        public void Show()
-        {
-            if (!_entryAvailable)
-                return;
-
-            EnsureServices();
-
-            if (_panelRoot != null)
-                _panelRoot.SetActive(true);
-
-            if (_openButton != null)
-                _openButton.gameObject.SetActive(false);
-
-            Refresh();
-        }
-
-        /// <summary>
-        /// Closes the equipment panel.
-        /// </summary>
-        public void Hide()
-        {
-            HideTooltip();
-
-            if (_panelRoot != null)
-                _panelRoot.SetActive(false);
-
-            if (_openButton != null)
-                _openButton.gameObject.SetActive(_entryAvailable);
-        }
-
-        /// <summary>
-        /// Enables or disables entry into the equipment UI.
-        /// </summary>
-        public void SetEntryAvailable(bool available)
-        {
-            _entryAvailable = available;
-            if (!available)
-                Hide();
-        }
-
-        /// <summary>
         /// Rebuilds inventory slots for the selected character.
         /// </summary>
         public void Refresh()
@@ -237,27 +179,11 @@ namespace Presentation
                 return;
             }
 
-            var sheet = GetComponent<CharacterSheet>();
-            sheet?.ResolveProfileService();
             ServiceLocator.TryGet(out _profileService);
         }
 
         private void BindButtons(bool bind)
         {
-            if (_openButton != null)
-            {
-                _openButton.onClick.RemoveListener(Show);
-                if (bind)
-                    _openButton.onClick.AddListener(Show);
-            }
-
-            if (_closeButton != null)
-            {
-                _closeButton.onClick.RemoveListener(Hide);
-                if (bind)
-                    _closeButton.onClick.AddListener(Hide);
-            }
-
             BindButton(_equipButton, _equipAction, bind);
             BindButton(_sellButton, _sellAction, bind);
         }

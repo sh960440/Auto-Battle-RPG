@@ -5534,7 +5534,6 @@ GameObject:
   - component: {fileID: 1083019287}
   - component: {fileID: 1083019286}
   - component: {fileID: 1083019285}
-  - component: {fileID: 1083019289}
   - component: {fileID: 1083019290}
   - component: {fileID: 1083019291}
   m_Layer: 5
@@ -5629,29 +5628,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1083019289
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1083019284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9673bd92501e7fb4c9b428516c0b257b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Presentation.CharacterSheet
-  _panelRoot: {fileID: 0}
-  _openButton: {fileID: 0}
-  _closeButton: {fileID: 0}
-  _prevButton: {fileID: 0}
-  _nextButton: {fileID: 0}
-  _nameLabel: {fileID: 0}
-  _classLabel: {fileID: 0}
-  _levelLabel: {fileID: 0}
-  _statsLabel: {fileID: 0}
-  _equipmentLabel: {fileID: 0}
-  _skillLabel: {fileID: 0}
 --- !u!114 &1083019290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5675,9 +5651,6 @@ MonoBehaviour:
   _rightHandSlot: {fileID: 79195143}
   _upperBodySlot: {fileID: 461525799}
   _lowerBodySlot: {fileID: 821549787}
-  _panelRoot: {fileID: 0}
-  _openButton: {fileID: 0}
-  _closeButton: {fileID: 0}
 --- !u!114 &1083019291
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -69,7 +69,6 @@ namespace Presentation
         [SerializeField] private TMP_Text _skill2NameText;
         [SerializeField] private TMP_Text _skill2DescriptionText;
 
-        private CharacterSheet _characterSheet;
         private EquipmentCenter _equipmentCenter;
         private ProgressionService _progression;
         private PlayerProfileService _profileService;
@@ -128,9 +127,7 @@ namespace Presentation
 
         private void EnsurePartyComponents()
         {
-            _characterSheet = GetComponent<CharacterSheet>();
             _equipmentCenter = GetComponent<EquipmentCenter>();
-            _characterSheet?.ResolveProfileService();
             ServiceLocator.TryGet(out _profileService);
         }
 
